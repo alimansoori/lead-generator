@@ -94,6 +94,14 @@
             white-space: nowrap;
         }
 
+        body {
+            font-size: smaller;
+        }
+
+        .category-style {
+            font-weight: 900;
+        }
+
 
     </style>
     <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.7.0.js"></script>
@@ -378,9 +386,9 @@
                             if (!data) {
                                 return ''
                             }
-                            if (type === 'display') {
+                            /*if (type === 'display') {
                                 return `<a href="https://amazon.com/dp/${data}">${data}</a>`
-                            }
+                            }*/
 
                             return data;
                         }
@@ -388,7 +396,7 @@
                     {
                         data: 'amazon.category',
                         name: 'amazon.category',
-                        className: 'inline-block',
+                        className: 'inline-block category-style',
                         render: function (data, type) {
                             if (!data) {
                                 return ''
@@ -438,7 +446,18 @@
                             return data;
                         }
                     },
-                    {data: "status"},
+                    {
+                        data: 'amazon.size',
+                        name: 'amazon.size',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (!data) {
+                                return '-----'
+                            }
+
+                            return data;
+                        }
+                    },
                     {
                         data: 'amazon.seller',
                         name: 'amazon.seller',
@@ -623,7 +642,7 @@
 <div class="container">
     <section>
         <h1><span></span></h1>
-        <h1>Leads <span></span></h1>
+        <h1>Lead <span>Generator</span></h1>
         <div class="demo-html">
             <div id="customForm">
                 <fieldset class="leadTmp">
@@ -669,7 +688,7 @@
                     <th>Category</th>
                     <th>Price</th>
                     <th>Pack</th>
-                    <th>Weight (Lbs)</th>
+                    <th>Size</th>
                     <th>Seller</th>
                     <th>Bsr</th>
                     <th>Sales</th>
@@ -699,9 +718,24 @@
             </table>
         </div>
 
-
     </section>
 </div>
-
+<hr/>
+<hr/>
+<hr/>
+<hr/>
+<hr/>
+<hr/>
+<hr/>
+<hr/>
+<hr/>
+<hr/>
+<hr/>
+<hr/>
+<hr/>
+<hr/>
+<hr/>
+<hr/>
+<hr/>
 </body>
 </html>

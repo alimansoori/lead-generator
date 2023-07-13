@@ -1,0 +1,11 @@
+node_modules/*
+.idea
+tmp
+yarn-error.log
+yarn.lock
+xlsx
+gitkraken_rsa.pub
+
+gitkraken_rsa
+
+package-lock.json
