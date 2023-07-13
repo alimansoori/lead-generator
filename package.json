@@ -4,7 +4,7 @@
   "description": "Lead Generator",
   "main": "index.js",
   "directories": {
-    "example": "src"
+    "example": "leads"
   },
   "dependencies": {
     "body-parser": "^1.20.1",

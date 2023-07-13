@@ -24,7 +24,7 @@ app.use( controllers );
 
 // Static files for the demo. Use nginx or similar for real deploys
 app.use( express.static('public') );
-app.use( '/src', express.static('src') );
+app.use( '/leads', express.static('leads') );
 
 // 500 Error
 app.use( function( err, req, res, next ) {

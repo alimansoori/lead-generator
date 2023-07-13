@@ -473,6 +473,25 @@
                         }
                     },
                     {
+                        data: 'amazon.isIp',
+                        name: 'amazon.isIp',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (!data) {
+                                return 'Not Check'
+                            }
+
+                            if (type === 'display' && data === true) {
+                                return 'Yes'
+                            } else if (type === 'display' && data === false) {
+                                return 'No'
+                            }
+
+
+                            return data;
+                        }
+                    },
+                    {
                         data: 'amazon.size',
                         name: 'amazon.size',
                         className: 'inline-block',
@@ -676,7 +695,7 @@
 
                 },
                 searchBuilder: {
-                    columns: [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]
+                    columns: [1,2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
                 },
                 dom: 'QBfrtip',
                 scrollX: true,
@@ -691,9 +710,6 @@
             table.on('click', 'tbody td.bubble-edit', function (e) {
                 editor.bubble(this);
             });
-
-            let insertPoint = table.table().container().querySelectorAll('.fg-toolbar')[0];
-            table.buttons().container().appendTo(insertPoint);
         });
 
 
@@ -729,7 +745,7 @@
                 <tr>
                     <th colspan="5"></th>
                     <th colspan="6" style="border-left: ridge;">Source</th>
-                    <th colspan="11" style="border-left: ridge;">Amazon</th>
+                    <th colspan="12" style="border-left: ridge;">Amazon</th>
                     <th colspan="4" style="border-left: ridge;">Lead</th>
                 </tr>
                 <tr>
@@ -749,6 +765,7 @@
                     <th>Category</th>
                     <th>Price</th>
                     <th>Number of Pack</th>
+                    <th>Is IP</th>
                     <th>Size</th>
                     <th>Seller</th>
                     <th>Bsr</th>
@@ -779,6 +796,7 @@
                     <th>Category</th>
                     <th>Price</th>
                     <th>Number of Pack</th>
+                    <th>Is IP</th>
                     <th>Size</th>
                     <th>Seller</th>
                     <th>Bsr</th>
