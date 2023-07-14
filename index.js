@@ -62,7 +62,7 @@ app.post('/webhook', async (req, res) => {
 });
 
 // Listening
- const server = app.listen( 8081, '0.0.0.0', function () {
+const server = app.listen( 8081, '0.0.0.0', function () {
     console.log( 'DataTables Editor demo - navigate to http://localhost:8081/' );
 } );
 

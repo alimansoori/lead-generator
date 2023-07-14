@@ -110,7 +110,6 @@
 
         .dtsb-searchBuilder, .dt-buttons, .dataTables_filter {
             margin-left: 10px;
-            display: none;
         }
 
         table.dataTable > thead > tr > th, table.dataTable > thead > tr > td {
@@ -155,7 +154,7 @@
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
                 ajax: {
-                    url: "http://localhost:3000/api/1.0/leads",
+                    url: "http://74.91.16.115:3000/api/1.0/leads",
                     type: "POST",
                 },
                 table: "#example",
@@ -205,7 +204,7 @@
             var table = $('#example').DataTable({
                 fixedHeader: true,
                 ajax: {
-                    url: "http://localhost:3000/api/1.0/leads",
+                    url: "http://74.91.16.115:3000/api/1.0/leads",
                     type: "POST",
                 },
                 columns: [
@@ -214,6 +213,35 @@
                         defaultContent: '',
                         className: 'select-checkbox',
                         orderable: false
+                    },
+                    {
+                        data: 'source.updatedAt',
+                        name: 'source.updatedAt',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (type === 'display') {
+                                let currentDate = new Date();
+                                const date = new Date(data)
+                                let timeDiff = currentDate.getTime() - date.getTime();
+
+                                let seconds = Math.floor(timeDiff / 1000);
+                                let minutes = Math.floor(seconds / 60);
+                                let hours = Math.floor(minutes / 60);
+                                let days = Math.floor(hours / 24);
+
+                                if (days > 0) {
+                                    return days + " days ago";
+                                } else if (hours > 0) {
+                                    return hours + " hours ago";
+                                } else if (minutes > 0) {
+                                    return minutes + " minutes ago";
+                                } else {
+                                    return "a few seconds before";
+                                }
+                            }
+
+                            return data;
+                        }
                     },
                     {
                         data: null,
@@ -274,7 +302,7 @@
                             return `<a href="${source?.url}"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ88Y6Jdz9jnkpHRk-0BCC80cboBoaTghwOLA&usqp=CAU" style="min-width: 100px; min-height: 100px; opacity: 1;max-width: 100px; max-height: 100px;"></a>`
                         },
                         defaultContent: `<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ88Y6Jdz9jnkpHRk-0BCC80cboBoaTghwOLA&usqp=CAU" style="min-width: 100px; min-height: 100px; opacity: 1;max-width: 100px; max-height: 100px;">`,
-                        title: 'Product Image'
+                        title: 'Src Image'
                     },
                     {
                         data: 'amazon',
@@ -291,17 +319,15 @@
                         title: 'Amazon Image'
                     },
                     {
-                        data: 'source.title',
-                        name: 'source.title',
-                        className: 'text-max-length',
+                        data: 'amazon.asin',
+                        name: 'amazon.asin',
+                        className: 'inline-block',
                         render: function (data, type) {
                             if (!data) {
-                                return '-----'
+                                return ''
                             }
-
                             if (type === 'display') {
-
-                                return `<span title="${data}">${data}</span>`;
+                                return `<a href="https://amazon.com/dp/${data}">${data}</a>`
                             }
 
                             return data;
@@ -319,6 +345,23 @@
                                 const domain = data.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/)[1];
 
                                 return '<a href="' + data + '">' + domain + '</a>';
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'source.title',
+                        name: 'source.title',
+                        className: 'text-max-length',
+                        render: function (data, type) {
+                            if (!data) {
+                                return '-----'
+                            }
+
+                            if (type === 'display') {
+
+                                return `<span title="${data}">${data}</span>`;
                             }
 
                             return data;
@@ -379,35 +422,6 @@
                         }
                     },
                     {
-                        data: 'source.updatedAt',
-                        name: 'source.updatedAt',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (type === 'display') {
-                                let currentDate = new Date();
-                                const date = new Date(data)
-                                let timeDiff = currentDate.getTime() - date.getTime();
-
-                                let seconds = Math.floor(timeDiff / 1000);
-                                let minutes = Math.floor(seconds / 60);
-                                let hours = Math.floor(minutes / 60);
-                                let days = Math.floor(hours / 24);
-
-                                if (days > 0) {
-                                    return days + " days ago";
-                                } else if (hours > 0) {
-                                    return hours + " hours ago";
-                                } else if (minutes > 0) {
-                                    return minutes + " minutes ago";
-                                } else {
-                                    return "a few seconds before";
-                                }
-                            }
-
-                            return data;
-                        }
-                    },
-                    {
                         data: 'amazon.title',
                         name: 'amazon.title',
                         className: 'text-max-length',
@@ -419,21 +433,6 @@
                             if (type === 'display') {
 
                                 return `<span title="${data}">${data}</span>`;
-                            }
-
-                            return data;
-                        }
-                    },
-                    {
-                        data: 'amazon.asin',
-                        name: 'amazon.asin',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (!data) {
-                                return ''
-                            }
-                            if (type === 'display') {
-                                return `<a href="https://amazon.com/dp/${data}">${data}</a>`
                             }
 
                             return data;
@@ -715,7 +714,7 @@
 
                 },
                 searchBuilder: {
-                    columns: [1, 2, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26],
+                    columns: [1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26],
                     logic: 'AND',
                     /*preDefined: {
                         criteria: [
@@ -775,7 +774,7 @@
                 },
                 columnDefs: [
                     {
-                        targets: 5,
+                        targets: 8,
                         searchBuilder: {
                             defaultCondition: 'contains',
                         },
@@ -783,7 +782,7 @@
                         searchBuilderType: 'string',
                     },
                     {
-                        targets: 11,
+                        targets: 12,
                         searchBuilder: {
                             defaultCondition: 'contains',
                         },
@@ -791,7 +790,7 @@
                         searchBuilderType: 'string',
                     },
                     {
-                        targets: 10,
+                        targets: 1,
                         searchBuilder: {
                             defaultCondition: '>',
                         },
@@ -870,18 +869,18 @@
                 </tr>
                 <tr>
                     <th>#</th>
+                    <th>Src UpdatedAt</th>
                     <th>Hide</th>
                     <th>Status</th>
-                    <th>Product Image</th>
+                    <th>Src Image</th>
                     <th>Amazon Image</th>
+                    <th>ASIN</th>
+                    <th>Src URL</th>
                     <th>Src Title</th>
-                    <th>URL</th>
-                    <th>Product Price</th>
+                    <th>Src Price</th>
                     <th>Number of Pack</th>
                     <th>Availability</th>
-                    <th>Updated At</th>
                     <th>Amz Title</th>
-                    <th>ASIN</th>
                     <th>Category</th>
                     <th>Price</th>
                     <th>Number of Pack</th>
@@ -901,18 +900,18 @@
                 <tfoot>
                 <tr>
                     <th>#</th>
+                    <th>Src UpdatedAt</th>
                     <th>Hide</th>
                     <th>Status</th>
-                    <th>Product Image</th>
+                    <th>Src Image</th>
                     <th>Amazon Image</th>
+                    <th>ASIN</th>
+                    <th>Src URL</th>
                     <th>Src Title</th>
-                    <th>URL</th>
-                    <th>Product Price</th>
+                    <th>Src Price</th>
                     <th>Number of Pack</th>
                     <th>Availability</th>
-                    <th>Updated At</th>
                     <th>Amz Title</th>
-                    <th>ASIN</th>
                     <th>Category</th>
                     <th>Price</th>
                     <th>Number of Pack</th>
