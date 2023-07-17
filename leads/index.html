@@ -154,7 +154,7 @@
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
                 ajax: {
-                    url: "http://74.91.16.115:3000/api/1.0/leads",
+                    url: "http://localhost:3000/api/1.0/leads",
                     type: "POST",
                 },
                 table: "#example",
@@ -204,7 +204,7 @@
             var table = $('#example').DataTable({
                 fixedHeader: true,
                 ajax: {
-                    url: "http://74.91.16.115:3000/api/1.0/leads",
+                    url: "http://localhost:3000/api/1.0/leads",
                     type: "POST",
                 },
                 columns: [
@@ -362,6 +362,22 @@
                             if (type === 'display') {
 
                                 return `<span title="${data}">${data}</span>`;
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: null,
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (!data) {
+                                return 'Coming Soon!'
+                            }
+
+                            if (type === 'display') {
+
+                                return 'Coming Soon!'
                             }
 
                             return data;
@@ -588,6 +604,18 @@
                         }
                     },
                     {
+                        data: 'source.note',
+                        name: 'source.note',
+                        className: 'text-max-length',
+                        render: function (data, type) {
+                            if (!data) {
+                                return ''
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
                         data: 'amazon.note',
                         name: 'amazon.note',
                         className: 'text-max-length',
@@ -714,9 +742,8 @@
 
                 },
                 searchBuilder: {
-                    columns: [1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26],
-                    logic: 'AND',
-                    /*preDefined: {
+                    columns: [1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
+                    preDefined: {
                         criteria: [
                             {
                                 condition: '>=',
@@ -725,13 +752,6 @@
                                 type: 'num-ftm',
                                 value: ['5'],
                                 value1: '5'
-                            }, {
-                                condition: '>',
-                                data: 'ROI',
-                                origData: 'roi',
-                                type: 'num-ftm',
-                                value: ['25'],
-                                value1: '25'
                             }, {
                                 condition: '>',
                                 data: 'ROI',
@@ -753,24 +773,10 @@
                                 type: 'string',
                                 value: ['mis_match'],
                                 value1: 'mis_match'
-                            }, {
-                                condition: '=',
-                                data: 'Category',
-                                origData: 'amazon.category',
-                                type: 'string',
-                                value: ['Toys & Games'],
-                                value1: 'Toys & Games'
-                            }, {
-                                condition: '<=',
-                                data: 'Bsr',
-                                origData: 'amazon.bsr',
-                                type: 'num',
-                                value: ['200000'],
-                                value1: '200000'
                             }
                         ],
                         logic: 'AND'
-                    }*/
+                    }
                 },
                 columnDefs: [
                     {
@@ -806,7 +812,7 @@
                         searchBuilderType: 'date',
                     },
                     {
-                        targets: 26,
+                        targets: 28,
                         searchBuilder: {
                             defaultCondition: '>',
                         },
@@ -864,7 +870,7 @@
                 <tr>
                     <th colspan="5"></th>
                     <th colspan="6">Source</th>
-                    <th colspan="12">Amazon</th>
+                    <th colspan="13">Amazon</th>
                     <th colspan="4">Lead</th>
                 </tr>
                 <tr>
@@ -877,6 +883,7 @@
                     <th>ASIN</th>
                     <th>Src URL</th>
                     <th>Src Title</th>
+                    <th>Graph</th>
                     <th>Src Price</th>
                     <th>Number of Pack</th>
                     <th>Availability</th>
@@ -890,6 +897,7 @@
                     <th>Bsr</th>
                     <th>Sales</th>
                     <th>Updated At</th>
+                    <th>Src Note</th>
                     <th>Amz Note</th>
                     <th>Match Quality</th>
                     <th>Profit</th>
@@ -908,6 +916,7 @@
                     <th>ASIN</th>
                     <th>Src URL</th>
                     <th>Src Title</th>
+                    <th>Graph</th>
                     <th>Src Price</th>
                     <th>Number of Pack</th>
                     <th>Availability</th>
@@ -921,6 +930,7 @@
                     <th>Bsr</th>
                     <th>Sales</th>
                     <th>Updated At</th>
+                    <th>Src Note</th>
                     <th>Amz Note</th>
                     <th>Match Quality</th>
                     <th>Profit</th>

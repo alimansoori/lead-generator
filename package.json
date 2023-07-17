@@ -17,6 +17,7 @@
     "knex": "^2.4.0",
     "pg": "^8.8.0",
     "simple-git": "^3.19.1",
+    "mysql": "^2.18.1"
   },
   "devDependencies": {
     "source-map-support": "^0.5.21"
