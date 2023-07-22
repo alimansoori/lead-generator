@@ -110,7 +110,6 @@
 
         .dtsb-searchBuilder, .dt-buttons, .dataTables_filter {
             margin-left: 10px;
-            display: none;
         }
 
         table.dataTable > thead > tr > th, table.dataTable > thead > tr > td {
@@ -728,11 +727,11 @@
                     selector: 'td:first-child',
                     style: 'os'
                 },
-                /*buttons: [
+                buttons: [
                     {extend: 'create', editor},
                     {extend: 'edit', editor},
                     {extend: 'remove', editor},
-                ],*/
+                ],
                 rowCallback: function (row, data) {
                     if (data?.status === 'mis_match') {
                         $(row).addClass('mismatch-row');
@@ -761,7 +760,7 @@
                                 origData: 'profit',
                                 type: 'num-ftm',
                                 value: ['5'],
-                                value1: '4'
+                                value1: '5'
                             }, {
                                 condition: '>',
                                 data: 'ROI',
