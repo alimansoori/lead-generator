@@ -155,7 +155,7 @@
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
                 ajax: {
-                    url: "http://localhost:3000/api/1.0/leads",
+                    url: "http://162.223.91.117:3000/api/1.0/leads",
                     type: "POST",
                 },
                 table: "#example",
@@ -205,7 +205,7 @@
             var table = $('#example').DataTable({
                 fixedHeader: true,
                 ajax: {
-                    url: "http://localhost:3000/api/1.0/leads",
+                    url: "http://162.223.91.117:3000/api/1.0/leads",
                     type: "POST",
                 },
                 columns: [
@@ -353,17 +353,30 @@
                         }
                     },
                     {
-                        data: 'source.title',
-                        name: 'source.title',
-                        className: 'text-max-length',
+                        data: 'source.numPack',
+                        name: 'source.numPack',
+                        className: 'inline-block bubble-edit',
                         render: function (data, type) {
                             if (!data) {
-                                return '-----'
+                                return '1 Pack'
+                            }
+                            if (type === 'display') {
+                                return `${data} Pack`
                             }
 
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'amazon.numPack',
+                        name: 'amazon.numPack',
+                        className: 'inline-block bubble-edit',
+                        render: function (data, type) {
+                            if (!data) {
+                                return '1 Pack'
+                            }
                             if (type === 'display') {
-
-                                return `<span title="${data}">${data}</span>`;
+                                return `${data} Pack`
                             }
 
                             return data;
@@ -410,18 +423,24 @@
                         }
                     },
                     {
-                        data: 'source.numPack',
-                        name: 'source.numPack',
-                        className: 'inline-block bubble-edit',
+                        data: 'amazon.price',
+                        name: 'amazon.price',
+                        className: 'inline-block',
                         render: function (data, type) {
+                            let number = DataTable.render
+                                .number(',', '.', 2, '$')
+                                .display(data);
+
                             if (!data) {
-                                return '1 Pack'
+                                return ''
                             }
                             if (type === 'display') {
-                                return `${data} Pack`
+                                let color = '#000000';
+
+                                return `<span style="color:${color}">${number}</span>`;
                             }
 
-                            return data;
+                            return number;
                         }
                     },
                     {
@@ -436,6 +455,67 @@
                                     return 'In Stock'
                                 }
                             }
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'profit',
+                        name: 'profit',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            let number = DataTable.render
+                                .number(',', '.', 2, '$')
+                                .display(data);
+
+                            if (!data) {
+                                return ''
+                            }
+                            if (type === 'display') {
+                                let color = 'green';
+                                if (data < 5) {
+                                    color = 'red';
+                                }
+
+                                return `<span style="color:${color}">${number}</span>`;
+                            }
+
+                            return number;
+                        }
+                    },
+                    {
+                        data: 'roi',
+                        name: 'roi',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (!data) {
+                                return ''
+                            }
+                            if (type === 'display') {
+                                let color = 'green';
+                                if (data < 30) {
+                                    color = 'red';
+                                }
+
+                                return `<span style="color:${color}">${data}%</span>`;
+                            }
+
+                            return data + '%';
+                        }
+                    },
+                    {
+                        data: 'source.title',
+                        name: 'source.title',
+                        className: 'text-max-length',
+                        render: function (data, type) {
+                            if (!data) {
+                                return '-----'
+                            }
+
+                            if (type === 'display') {
+
+                                return `<span title="${data}">${data}</span>`;
+                            }
+
                             return data;
                         }
                     },
@@ -468,42 +548,6 @@
                                 let color = '#0d904f';
 
                                 return `<span style="color:${color}">${data}</span>`;
-                            }
-
-                            return data;
-                        }
-                    },
-                    {
-                        data: 'amazon.price',
-                        name: 'amazon.price',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            let number = DataTable.render
-                                .number(',', '.', 2, '$')
-                                .display(data);
-
-                            if (!data) {
-                                return ''
-                            }
-                            if (type === 'display') {
-                                let color = '#000000';
-
-                                return `<span style="color:${color}">${number}</span>`;
-                            }
-
-                            return number;
-                        }
-                    },
-                    {
-                        data: 'amazon.numPack',
-                        name: 'amazon.numPack',
-                        className: 'inline-block bubble-edit',
-                        render: function (data, type) {
-                            if (!data) {
-                                return '1 Pack'
-                            }
-                            if (type === 'display') {
-                                return `${data} Pack`
                             }
 
                             return data;
@@ -577,8 +621,50 @@
                         }
                     },
                     {
+                        data: 'matchQuality',
+                        name: 'matchQuality',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (!data) {
+                                return ''
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
                         data: 'amazon.updatedAt',
                         name: 'amazon.updatedAt',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (type === 'display') {
+                                let currentDate = new Date();
+                                const date = new Date(data)
+                                let timeDiff = currentDate.getTime() - date.getTime();
+
+                                let seconds = Math.floor(timeDiff / 1000);
+                                let minutes = Math.floor(seconds / 60);
+                                let hours = Math.floor(minutes / 60);
+                                let days = Math.floor(hours / 24);
+
+                                if (days > 0) {
+                                    return days + " days ago";
+                                } else if (hours > 0) {
+                                    return hours + " hours ago";
+                                } else if (minutes > 0) {
+                                    return minutes + " minutes ago";
+                                } else {
+                                    return "a few seconds before";
+                                }
+                            }
+
+                            return data;
+                        }
+                    },
+
+                    {
+                        data: 'updatedAt',
+                        name: 'updatedAt',
                         className: 'inline-block',
                         render: function (data, type) {
                             if (type === 'display') {
@@ -637,91 +723,6 @@
                             return data;
                         }
                     },
-                    {
-                        data: 'matchQuality',
-                        name: 'matchQuality',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (!data) {
-                                return ''
-                            }
-
-                            return data;
-                        }
-                    },
-                    {
-                        data: 'profit',
-                        name: 'profit',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            let number = DataTable.render
-                                .number(',', '.', 2, '$')
-                                .display(data);
-
-                            if (!data) {
-                                return ''
-                            }
-                            if (type === 'display') {
-                                let color = 'green';
-                                if (data < 5) {
-                                    color = 'red';
-                                }
-
-                                return `<span style="color:${color}">${number}</span>`;
-                            }
-
-                            return number;
-                        }
-                    },
-                    {
-                        data: 'roi',
-                        name: 'roi',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (!data) {
-                                return ''
-                            }
-                            if (type === 'display') {
-                                let color = 'green';
-                                if (data < 30) {
-                                    color = 'red';
-                                }
-
-                                return `<span style="color:${color}">${data}%</span>`;
-                            }
-
-                            return data + '%';
-                        }
-                    },
-                    {
-                        data: 'updatedAt',
-                        name: 'updatedAt',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (type === 'display') {
-                                let currentDate = new Date();
-                                const date = new Date(data)
-                                let timeDiff = currentDate.getTime() - date.getTime();
-
-                                let seconds = Math.floor(timeDiff / 1000);
-                                let minutes = Math.floor(seconds / 60);
-                                let hours = Math.floor(minutes / 60);
-                                let days = Math.floor(hours / 24);
-
-                                if (days > 0) {
-                                    return days + " days ago";
-                                } else if (hours > 0) {
-                                    return hours + " hours ago";
-                                } else if (minutes > 0) {
-                                    return minutes + " minutes ago";
-                                } else {
-                                    return "a few seconds before";
-                                }
-                            }
-
-                            return data;
-                        }
-                    },
                 ],
                 select: {
                     blurable: true,
@@ -761,7 +762,7 @@
                                 origData: 'profit',
                                 type: 'num-ftm',
                                 value: ['5'],
-                                value1: '4'
+                                value1: '5'
                             }, {
                                 condition: '>',
                                 data: 'ROI',
@@ -790,19 +791,19 @@
                 },
                 columnDefs: [
                     {
-                        targets: 8,
+                        targets: 16,
                         searchBuilder: {
                             defaultCondition: 'contains',
                         },
-                        searchBuilderTitle: 'Source Title',
+                        // searchBuilderTitle: 'Source Title',
                         searchBuilderType: 'string',
                     },
                     {
-                        targets: 12,
+                        targets: 17,
                         searchBuilder: {
                             defaultCondition: 'contains',
                         },
-                        searchBuilderTitle: 'Amazon Title',
+                        // searchBuilderTitle: 'Amazon Title',
                         searchBuilderType: 'string',
                     },
                     {
@@ -810,19 +811,19 @@
                         searchBuilder: {
                             defaultCondition: '>',
                         },
-                        searchBuilderTitle: 'Source Updated At',
+                        // searchBuilderTitle: 'Source Updated At',
                         searchBuilderType: 'date',
                     },
                     {
-                        targets: 21,
+                        targets: 25,
                         searchBuilder: {
                             defaultCondition: '>',
                         },
-                        searchBuilderTitle: 'Amazon Updated At',
+                        // searchBuilderTitle: 'Amazon Updated At',
                         searchBuilderType: 'date',
                     },
                     {
-                        targets: 28,
+                        targets: 26,
                         searchBuilder: {
                             defaultCondition: '>',
                         },
@@ -878,12 +879,6 @@
             <table id="example" class="cell-border dataTable" style="width:100%">
                 <thead>
                 <tr>
-                    <th colspan="5"></th>
-                    <th colspan="6">Source</th>
-                    <th colspan="13">Amazon</th>
-                    <th colspan="4">Lead</th>
-                </tr>
-                <tr>
                     <th>#</th>
                     <th>Src UpdatedAt</th>
                     <th>Hide</th>
@@ -892,27 +887,27 @@
                     <th>Amazon Image</th>
                     <th>ASIN</th>
                     <th>Src URL</th>
-                    <th>Src Title</th>
+                    <th>Src Pack</th>
+                    <th>Amz Pack</th>
                     <th>Graph</th>
                     <th>Src Price</th>
-                    <th>Number of Pack</th>
-                    <th>Availability</th>
+                    <th>Amz Price</th>
+                    <th>Src Availability</th>
+                    <th>Profit</th>
+                    <th>ROI</th>
+                    <th>Src Title</th>
                     <th>Amz Title</th>
                     <th>Category</th>
-                    <th>Price</th>
-                    <th>Number of Pack</th>
                     <th>Is IP</th>
                     <th>Size</th>
                     <th>Seller</th>
                     <th>Bsr</th>
                     <th>Sales</th>
-                    <th>Updated At</th>
+                    <th>Match Quality</th>
+                    <th>Amz UpdatedAt</th>
+                    <th>Lead UpdatedAt</th>
                     <th>Src Note</th>
                     <th>Amz Note</th>
-                    <th>Match Quality</th>
-                    <th>Profit</th>
-                    <th>ROI</th>
-                    <th>Updated At</th>
                 </tr>
                 </thead>
                 <tfoot>
@@ -925,27 +920,27 @@
                     <th>Amazon Image</th>
                     <th>ASIN</th>
                     <th>Src URL</th>
-                    <th>Src Title</th>
+                    <th>Src Pack</th>
+                    <th>Amz Pack</th>
                     <th>Graph</th>
                     <th>Src Price</th>
-                    <th>Number of Pack</th>
-                    <th>Availability</th>
+                    <th>Amz Price</th>
+                    <th>Src Availability</th>
+                    <th>Profit</th>
+                    <th>ROI</th>
+                    <th>Src Title</th>
                     <th>Amz Title</th>
                     <th>Category</th>
-                    <th>Price</th>
-                    <th>Number of Pack</th>
                     <th>Is IP</th>
                     <th>Size</th>
                     <th>Seller</th>
                     <th>Bsr</th>
                     <th>Sales</th>
-                    <th>Updated At</th>
+                    <th>Match Quality</th>
+                    <th>Amz UpdatedAt</th>
+                    <th>Lead UpdatedAt</th>
                     <th>Src Note</th>
                     <th>Amz Note</th>
-                    <th>Match Quality</th>
-                    <th>Profit</th>
-                    <th>ROI</th>
-                    <th>Updated At</th>
                 </tr>
                 </tfoot>
             </table>
