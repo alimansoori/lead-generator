@@ -149,7 +149,7 @@
     <script type="text/javascript" language="javascript" class="init">
         function formatDate() {
             const date = new Date()
-            date.setDate(date.getDate() - 1);
+            date.setDate(date.getDate() - 2);
 
             const year = date.getFullYear();
             const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -232,10 +232,10 @@
                                 const date = new Date(data)
                                 let timeDiff = currentDate.getTime() - date.getTime();
 
-                                let seconds = Math.floor(timeDiff / 1000);
-                                let minutes = Math.floor(seconds / 60);
-                                let hours = Math.floor(minutes / 60);
-                                let days = Math.floor(hours / 24);
+                                let seconds = Math.ceil(timeDiff / 1000);
+                                let minutes = Math.ceil(seconds / 60);
+                                let hours = Math.ceil(minutes / 60);
+                                let days = Math.ceil(hours / 24);
 
                                 if (days > 0) {
                                     return days + " days ago";
@@ -817,6 +817,27 @@
                                         type: 'string',
                                         value: ['Office Products'],
                                         value1: 'Office Products'
+                                    },{
+                                        condition: '=',
+                                        data: 'Category',
+                                        origData: 'amazon.category',
+                                        type: 'string',
+                                        value: ['Health & Household'],
+                                        value1: 'Health & Household'
+                                    },{
+                                        condition: '=',
+                                        data: 'Category',
+                                        origData: 'amazon.category',
+                                        type: 'string',
+                                        value: ['Kitchen & Dining'],
+                                        value1: 'Kitchen & Dining'
+                                    },{
+                                        condition: '=',
+                                        data: 'Category',
+                                        origData: 'amazon.category',
+                                        type: 'string',
+                                        value: ['Toys & Games'],
+                                        value1: 'Toys & Games'
                                     },
                                 ],
                                 logic: 'OR'

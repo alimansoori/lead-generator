@@ -232,10 +232,10 @@
                                 const date = new Date(data)
                                 let timeDiff = currentDate.getTime() - date.getTime();
 
-                                let seconds = Math.floor(timeDiff / 1000);
-                                let minutes = Math.floor(seconds / 60);
-                                let hours = Math.floor(minutes / 60);
-                                let days = Math.floor(hours / 24);
+                                let seconds = Math.ceil(timeDiff / 1000);
+                                let minutes = Math.ceil(seconds / 60);
+                                let hours = Math.ceil(minutes / 60);
+                                let days = Math.ceil(hours / 24);
 
                                 if (days > 0) {
                                     return days + " days ago";
