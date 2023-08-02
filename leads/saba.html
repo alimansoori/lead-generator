@@ -952,6 +952,18 @@
                 editor.bubble(this);
             });
 
+            // Jump to Page
+            const jumpToPage = document.querySelector('#jump_page');
+            jumpToPage.setAttribute('value', table.page()+1)
+            jumpToPage.addEventListener('change', () => {
+                if (jumpToPage.value > 0) {
+                    table.page(jumpToPage.value - 1).draw('page');
+                }
+            });
+            table.on( 'page.dt', function () {
+                jumpToPage.setAttribute('value', table.page()+1)
+            } );
+
         });
 
 
@@ -982,6 +994,18 @@
                     <div data-editor-template="amazon.numPack"></div>
                 </fieldset>
             </div>
+            <table style="width: 67%; margin: 0 auto 2em auto;">
+                <thead>
+                <tr>
+                    <th>Jump to Page</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr id="jump_page_parent">
+                    <td align="center"><input type="number" class="jump_page" id="jump_page"></td>
+                </tr>
+                </tbody>
+            </table>
             <table id="example" class="cell-border dataTable" style="width:100%">
                 <thead>
                 <tr>
