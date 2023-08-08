@@ -90,6 +90,9 @@ body {
 
 .dtsb-searchBuilder, .dt-buttons, .dataTables_filter {
     margin-left: 10px;
+}
+
+.dtsb-searchBuilder {
     display: grid;
 }
 
