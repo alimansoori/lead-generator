@@ -19,6 +19,7 @@
     <link rel="stylesheet" type="text/css" href="resources/demo.css">
     <link rel="stylesheet" type="text/css" href="../css/style.css">
 
+
     <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <script type="text/javascript" language="javascript"
             src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
@@ -36,14 +37,22 @@
     <script type="text/javascript" language="javascript" src="resources/demo.js"></script>
     <script type="text/javascript" language="javascript" src="resources/editor-demo.js"></script>
     <script type="text/javascript" language="javascript" class="init">
+        function formatDate() {
+            const date = new Date()
+            date.setDate(date.getDate() - 5);
 
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
 
         let editor;
 
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
                 ajax: {
-                    url: "http://162.223.91.117:3000/api/1.0/leads",
+                    url: "http://162.223.91.117:3000/api/1.0/test",
                     type: "POST",
                 },
                 table: "#example",
@@ -93,7 +102,7 @@
             var table = $('#example').DataTable({
                 fixedHeader: true,
                 ajax: {
-                    url: "http://162.223.91.117:3000/api/1.0/leads",
+                    url: "http://162.223.91.117:3000/api/1.0/test",
                     type: "POST",
                 },
                 columns: [
@@ -113,10 +122,10 @@
                                 const date = new Date(data)
                                 let timeDiff = currentDate.getTime() - date.getTime();
 
-                                let seconds = Math.floor(timeDiff / 1000);
-                                let minutes = Math.floor(seconds / 60);
-                                let hours = Math.floor(minutes / 60);
-                                let days = Math.floor(hours / 24);
+                                let seconds = Math.ceil(timeDiff / 1000);
+                                let minutes = Math.ceil(seconds / 60);
+                                let hours = Math.ceil(minutes / 60);
+                                let days = Math.ceil(hours / 24);
 
                                 if (days > 0) {
                                     return days + " days ago";
@@ -617,11 +626,6 @@
                     selector: 'td:first-child',
                     style: 'os'
                 },
-                /*buttons: [
-                    {extend: 'create', editor},
-                    {extend: 'edit', editor},
-                    {extend: 'remove', editor},
-                ],*/
                 rowCallback: function (row, data) {
                     if (data?.status === 'mis_match') {
                         $(row).addClass('mismatch-row');
@@ -641,66 +645,26 @@
 
                 },
                 searchBuilder: {
-                    columns: [1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28],
-                    preDefined: {
-                        criteria: [
-                            {
-                                condition: '>=',
-                                data: 'Profit',
-                                origData: 'profit',
-                                type: 'num-ftm',
-                                value: ['5'],
-                                value1: '5'
-                            }, {
-                                condition: '>',
-                                data: 'ROI',
-                                origData: 'roi',
-                                type: 'num-ftm',
-                                value: ['25'],
-                                value1: '25'
-                            }, {
-                                condition: '=',
-                                data: 'Availability',
-                                origData: 'source.availability',
-                                type: 'num',
-                                value: ['1'],
-                                value1: '1'
-                            }, {
-                                condition: '!=',
-                                data: 'Status',
-                                origData: 'status',
-                                type: 'string',
-                                value: ['mis_match'],
-                                value1: 'mis_match'
-                            }
-                        ],
-                        logic: 'AND'
-                    }
+                    columns: [3, 11, 12, 14, 15, 22, 23],
                 },
                 columnDefs: [
                     {
-                        targets: 16,
+                        targets: 3,
                         searchBuilder: {
-                            defaultCondition: 'contains',
+                            defaultCondition: '=',
                         },
-                        // searchBuilderTitle: 'Source Title',
-                        searchBuilderType: 'string',
                     },
                     {
-                        targets: 17,
+                        targets: 11,
                         searchBuilder: {
-                            defaultCondition: 'contains',
+                            defaultCondition: '<',
                         },
-                        // searchBuilderTitle: 'Amazon Title',
-                        searchBuilderType: 'string',
                     },
                     {
-                        targets: 1,
+                        targets: 12,
                         searchBuilder: {
-                            defaultCondition: '>',
+                            defaultCondition: '<',
                         },
-                        // searchBuilderTitle: 'Source Updated At',
-                        searchBuilderType: 'date',
                     },
                     {
                         targets: 25,
@@ -711,27 +675,35 @@
                         searchBuilderType: 'date',
                     },
                     {
-                        targets: 26,
+                        targets: 14,
                         searchBuilder: {
                             defaultCondition: '>',
                         },
-                        searchBuilderTitle: 'Lead Updated At',
-                        searchBuilderType: 'date',
+                    },
+                    {
+                        targets: 15,
+                        searchBuilder: {
+                            defaultCondition: '>',
+                        },
+                    },
+                    {
+                        targets: 22,
+                        searchBuilder: {
+                            defaultCondition: '<',
+                        },
+                    },
+                    {
+                        targets: 23,
+                        searchBuilder: {
+                            defaultCondition: '>',
+                        },
                     }
                 ],
-                dom: 'QBfrtip',
+                dom: 'frtipQ',
                 scrollX: true,
                 processing: true,
                 serverSide: true,
-                stateSave: true
-            });
-
-            /*table.buttons().container()
-                .appendTo($('div.eight.column:eq(0)', table.table().container()));*/
-
-            // Activate the bubble editor on click of a table cell
-            table.on('click', 'tbody td.bubble-edit', function (e) {
-                editor.bubble(this);
+                stateSave: true,
             });
 
         });
