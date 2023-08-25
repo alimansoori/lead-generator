@@ -2,9 +2,12 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <link rel="shortcut icon" type="image/ico" href="https://oabeans.com/wp-content/uploads/2020/08/OABeans-logo-150x150.png">
+    <link rel="shortcut icon" type="image/ico"
+          href="https://oabeans.com/wp-content/uploads/2020/08/OABeans-logo-150x150.png">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, user-scalable=no">
     <title>Lead Generator</title>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/datetime/1.5.0/css/dataTables.dateTime.min.css">
@@ -38,11 +41,12 @@
     <script type="text/javascript" language="javascript" src="resources/editor-demo.js"></script>
     <script type="text/javascript" language="javascript" class="init">
         let editor;
+        let isEdit = false
 
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
                 ajax: {
-                    url: "http://127.0.0.1:4000/api/leads",
+                    url: "http://162.223.91.117:4000/api/leads",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -97,15 +101,23 @@
             var table = $('#example').DataTable({
                 fixedHeader: true,
                 ajax: {
-                    url: "http://127.0.0.1:4000/api/leads",
+                    url: "http://162.223.91.117:4000/api/leads",
                     type: "GET",
                 },
                 columns: [
                     {
-                        data: null,
-                        defaultContent: '',
-                        className: 'select-checkbox',
-                        orderable: false
+                        data: 'seq',
+                        name: 'seq',
+                        render: function (data, type) {
+                            if (type === 'display') {
+                                return '<div class="action-buttons">' +
+                                    `<div class="row">${data}</div>` +
+                                    '<span class="refresh"><i class="fa fa-refresh"></i></span> ' +
+                                    '</div>';
+                            }
+
+                            return data;
+                        }
                     },
                     {
                         data: 'source.updatedAt',
@@ -553,7 +565,6 @@
                             return data;
                         }
                     },
-
                     {
                         data: 'updatedAt',
                         name: 'updatedAt',
@@ -618,7 +629,7 @@
                 ],
                 select: {
                     blurable: true,
-                    selector: 'td:first-child',
+                    selector: 'td:first-child div.row',
                     style: 'os'
                 },
                 buttons: [
@@ -700,18 +711,61 @@
                 dom: 'BfrtipQ',
                 scrollX: true,
                 processing: true,
+                language: { processing: '<div id="loading-wrapper">\n' +
+                        '  <div id="loading-text">LOADING</div>\n' +
+                        '  <div id="loading-content"></div>\n' +
+                        '</div>' },
                 serverSide: true,
                 stateSave: true,
                 pageLength: 500,
             });
 
-            /*table.buttons().container()
-                .appendTo($('div.eight.column:eq(0)', table.table().container()));*/
-
             // Activate the bubble editor on click of a table cell
             table.on('click', 'tbody td.bubble-edit', function (e) {
                 editor.bubble(this);
             });
+
+            table.on('click', 'div.action-buttons .refresh', function (e) {
+                let rowTag = e.target.closest('tr');
+                let row = table.row(rowTag);
+                let rowData = row.data();
+
+                $.ajax({
+                    type: "GET",
+                    url: "http://162.223.91.117:4000/api/leads/" + rowData['_id'],
+                    success: function (data) {
+                        const resData = data.data
+                        row.data({
+                            ...resData,
+                        })
+
+                        if (resData?.status === 'mis_match') {
+                            $(rowTag).removeClass('match-row');
+                            $(rowTag).removeClass('hidden-row');
+                            $(rowTag).addClass('mismatch-row');
+                        } else if (resData?.hiddenCreatedAt && resData?.hiddenDays) {
+                            const createdAt = new Date(resData.hiddenCreatedAt)
+                            const today = new Date()
+                            const hiddenDays = resData.hiddenDays
+
+                            const futureDate = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate() + hiddenDays);
+
+                            if (today < futureDate) {
+                                $(rowTag).removeClass('match-row');
+                                $(rowTag).removeClass('mismatch-row');
+                                $(rowTag).addClass('hidden-row');
+                            }
+                        } else if (resData?.status === 'match') {
+                            $(rowTag).addClass('match-row');
+                        } else {
+                            $(rowTag).removeClass('match-row');
+                            $(rowTag).removeClass('mismatch-row');
+                            $(rowTag).removeClass('hidden-row');
+                        }
+                    }
+                });
+            });
+
 
             // Jump to Page
             const jumpToPage = document.querySelector('#jump_page');
@@ -724,7 +778,6 @@
             table.on( 'page.dt', function () {
                 jumpToPage.setAttribute('value', table.page()+1)
             } );
-
         });
 
 
@@ -756,18 +809,7 @@
                     <div data-editor-template="amazon.numPack"></div>
                 </fieldset>
             </div>
-            <table style="width: 67%; margin: 0 auto 2em auto;">
-                <thead>
-                <tr>
-                    <th>Jump to Page</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr id="jump_page_parent">
-                    <td align="center"><input type="number" class="jump_page" id="jump_page"></td>
-                </tr>
-                </tbody>
-            </table>
+            <div id="jump_page_parent" class="dataTables_filter"><label>Jump to Page: <input type="number" id="jump_page" class="jump_page" placeholder="" aria-controls="example"></label></div>
             <table id="example" class="cell-border dataTable" style="width:100%">
                 <thead>
                 <tr>
