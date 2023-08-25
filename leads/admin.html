@@ -37,23 +37,18 @@
     <script type="text/javascript" language="javascript" src="resources/demo.js"></script>
     <script type="text/javascript" language="javascript" src="resources/editor-demo.js"></script>
     <script type="text/javascript" language="javascript" class="init">
-        function formatDate() {
-            const date = new Date()
-            date.setDate(date.getDate() - 5);
-
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
         let editor;
 
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
                 ajax: {
-                    url: "http://162.223.91.117:3000/api/1.0/leads",
+                    url: "http://127.0.0.1:4000/api/leads",
                     type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    "data": function (d) {
+                        return JSON.stringify(d);
+                    },
                 },
                 table: "#example",
                 template: '#customForm',
@@ -102,8 +97,8 @@
             var table = $('#example').DataTable({
                 fixedHeader: true,
                 ajax: {
-                    url: "http://162.223.91.117:3000/api/1.0/leads",
-                    type: "POST",
+                    url: "http://127.0.0.1:4000/api/leads",
+                    type: "GET",
                 },
                 columns: [
                     {
@@ -706,7 +701,8 @@
                 scrollX: true,
                 processing: true,
                 serverSide: true,
-                stateSave: true
+                stateSave: true,
+                pageLength: 500,
             });
 
             /*table.buttons().container()
@@ -737,8 +733,9 @@
 <body class="dt-example dt-example-semanticui">
 <div class="container">
     <section>
-        <h1><span></span></h1>
-        <h1>Lead <span>Generator</span></h1>
+        <a class="oabeans-logo" href="https://oabeans.com" target="_blank">
+            <img src="resources/logo.png">
+        </a>
         <div class="demo-html">
             <div id="customForm">
                 <fieldset class="leadTmp">
