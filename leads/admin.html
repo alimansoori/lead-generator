@@ -46,7 +46,7 @@
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
                 ajax: {
-                    url: "http://162.223.91.117:4000/api/leads",
+                    url: "http://162.223.91.117:5000/api/leads",
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -101,7 +101,7 @@
             var table = $('#example').DataTable({
                 fixedHeader: true,
                 ajax: {
-                    url: "http://162.223.91.117:4000/api/leads",
+                    url: "http://162.223.91.117:5000/api/leads",
                     type: "GET",
                 },
                 columns: [
@@ -732,7 +732,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "http://162.223.91.117:4000/api/leads/" + rowData['_id'],
+                    url: "http://162.223.91.117:5000/api/leads/" + rowData['_id'],
                     success: function (data) {
                         const resData = data.data
                         row.data({
