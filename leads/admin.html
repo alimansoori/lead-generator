@@ -716,12 +716,13 @@
                         '  <div id="loading-content"></div>\n' +
                         '</div>' },
                 serverSide: true,
-                stateSave: true,
+                // stateSave: true,
                 pageLength: 500,
             });
 
             // Activate the bubble editor on click of a table cell
             table.on('click', 'tbody td.bubble-edit', function (e) {
+                isEdit = true
                 editor.bubble(this);
             });
 
@@ -729,6 +730,8 @@
                 let rowTag = e.target.closest('tr');
                 let row = table.row(rowTag);
                 let rowData = row.data();
+
+                $('#example_processing').css('display', 'block')
 
                 $.ajax({
                     type: "GET",
@@ -762,10 +765,11 @@
                             $(rowTag).removeClass('mismatch-row');
                             $(rowTag).removeClass('hidden-row');
                         }
+                        $('#example_processing').css('display', 'none')
                     }
+
                 });
             });
-
 
             // Jump to Page
             const jumpToPage = document.querySelector('#jump_page');
