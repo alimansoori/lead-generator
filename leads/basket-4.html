@@ -657,9 +657,7 @@
                     style: 'os'
                 },
                 buttons: [
-                    {extend: 'create', editor},
                     {extend: 'edit', editor},
-                    {extend: 'remove', editor},
                 ],
                 rowCallback: function (row, data) {
                     if (data?.status === 'mis_match') {
@@ -694,10 +692,98 @@
                     }
 
                 },
+                order: [[1, 'asc']],
                 searchBuilder: {
                     columns: [0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
+                    preDefined: {
+                        criteria: [
+                            {
+                                condition: '>=',
+                                data: 'Profit',
+                                origData: 'profit',
+                                type: 'num-ftm',
+                                value: ['4'],
+                                value1: '4'
+                            }, {
+                                condition: '>',
+                                data: 'ROI',
+                                origData: 'roi',
+                                type: 'num-ftm',
+                                value: ['30'],
+                                value1: '30'
+                            }, {
+                                condition: '=',
+                                data: 'Availability',
+                                origData: 'source.availability',
+                                type: 'num',
+                                value: ['1'],
+                                value1: '1'
+                            },
+                            {
+                                criteria: [
+                                    {
+                                        condition: '=',
+                                        data: 'Category',
+                                        origData: 'amazon.category',
+                                        type: 'string',
+                                        value: ['Tools & Home Improvement'],
+                                        value1: 'Tools & Home Improvement'
+                                    },
+                                    {
+                                        condition: '=',
+                                        data: 'Category',
+                                        origData: 'amazon.category',
+                                        type: 'string',
+                                        value: ['Home & Kitchen'],
+                                        value1: 'Home & Kitchen'
+                                    },
+                                    {
+                                        condition: '=',
+                                        data: 'Category',
+                                        origData: 'amazon.category',
+                                        type: 'string',
+                                        value: ['Pet Supplies'],
+                                        value1: 'Pet Supplies'
+                                    },
+                                    {
+                                        condition: '=',
+                                        data: 'Category',
+                                        origData: 'amazon.category',
+                                        type: 'string',
+                                        value: ['Baby Products'],
+                                        value1: 'Baby Products'
+                                    },
+                                    {
+                                        condition: '=',
+                                        data: 'Category',
+                                        origData: 'amazon.category',
+                                        type: 'string',
+                                        value: ['Automotive'],
+                                        value1: 'Automotive'
+                                    },
+                                    {
+                                        condition: '=',
+                                        data: 'Category',
+                                        origData: 'amazon.category',
+                                        type: 'string',
+                                        value: ['Cell Phones & Accessories'],
+                                        value1: 'Cell Phones & Accessories'
+                                    },
+                                    {
+                                        condition: '=',
+                                        data: 'Category',
+                                        origData: 'amazon.category',
+                                        type: 'string',
+                                        value: ['Books'],
+                                        value1: 'Books'
+                                    }
+                                ],
+                                logic: 'OR'
+                            }
+                        ],
+                        logic: 'AND'
+                    }
                 },
-                order: [[1, 'asc']],
                 columnDefs: [
                     {
                         targets: 0,
