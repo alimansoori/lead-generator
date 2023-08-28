@@ -38,10 +38,10 @@
     <script type="text/javascript" language="javascript" src="resources/dataTables.fixedHeader.min.js"></script>
     <script type="text/javascript" language="javascript" src="resources/syntax/shCore.js"></script>
     <script type="text/javascript" language="javascript" src="resources/demo.js"></script>
+    <script type="text/javascript" language="javascript" src="resources/helper.js"></script>
     <script type="text/javascript" language="javascript" src="resources/editor-demo.js"></script>
     <script type="text/javascript" language="javascript" class="init">
         let editor;
-        let isEdit = false
 
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
@@ -155,64 +155,6 @@
                         }
                     },
                     {
-                        data: 'amazon.updatedAt',
-                        name: 'amazon.updatedAt',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (type === 'display') {
-                                let currentDate = new Date();
-                                const date = new Date(data)
-                                let timeDiff = currentDate.getTime() - date.getTime();
-
-                                let seconds = Math.floor(timeDiff / 1000);
-                                let minutes = Math.floor(seconds / 60);
-                                let hours = Math.floor(minutes / 60);
-                                let days = Math.floor(hours / 24);
-
-                                if (days > 0) {
-                                    return days + " days ago";
-                                } else if (hours > 0) {
-                                    return hours + " hours ago";
-                                } else if (minutes > 0) {
-                                    return minutes + " minutes ago";
-                                } else {
-                                    return "a few seconds before";
-                                }
-                            }
-
-                            return data;
-                        }
-                    },
-                    {
-                        data: 'updatedAt',
-                        name: 'updatedAt',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (type === 'display') {
-                                let currentDate = new Date();
-                                const date = new Date(data)
-                                let timeDiff = currentDate.getTime() - date.getTime();
-
-                                let seconds = Math.floor(timeDiff / 1000);
-                                let minutes = Math.floor(seconds / 60);
-                                let hours = Math.floor(minutes / 60);
-                                let days = Math.floor(hours / 24);
-
-                                if (days > 0) {
-                                    return days + " days ago";
-                                } else if (hours > 0) {
-                                    return hours + " hours ago";
-                                } else if (minutes > 0) {
-                                    return minutes + " minutes ago";
-                                } else {
-                                    return "a few seconds before";
-                                }
-                            }
-
-                            return data;
-                        }
-                    },
-                    {
                         data: null,
                         name: 'hiddenDays',
                         className: 'bubble-edit inline-block',
@@ -291,39 +233,6 @@
                         title: 'Amazon Image'
                     },
                     {
-                        data: 'amazon.asin',
-                        name: 'amazon.asin',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (!data) {
-                                return ''
-                            }
-                            if (type === 'display') {
-                                return `<a href="https://amazon.com/dp/${data}">${data}</a>`
-                            }
-
-                            return data;
-                        }
-                    },
-                    {
-                        data: 'source.url',
-                        name: 'source.url',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (!data) {
-                                return ''
-                            }
-                            if (type === 'display') {
-                                const domain = data.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/)[1];
-                                if (!data.startsWith('http')) return `<a href="https://${data}">${domain}</a>`;
-
-                                return '<a href="' + data + '">' + domain + '</a>';
-                            }
-
-                            return data;
-                        }
-                    },
-                    {
                         data: 'source.numPack',
                         name: 'source.numPack',
                         className: 'inline-block bubble-edit',
@@ -348,22 +257,6 @@
                             }
                             if (type === 'display') {
                                 return `${data} Pack`
-                            }
-
-                            return data;
-                        }
-                    },
-                    {
-                        data: null,
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (!data) {
-                                return 'Coming Soon!'
-                            }
-
-                            if (type === 'display') {
-
-                                return 'Coming Soon!'
                             }
 
                             return data;
@@ -415,21 +308,6 @@
                         }
                     },
                     {
-                        data: 'source.availability',
-                        name: 'source.availability',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (type === 'display') {
-                                if (data === false) {
-                                    return 'Out of Stock'
-                                } else if (data === true) {
-                                    return 'In Stock'
-                                }
-                            }
-                            return data;
-                        }
-                    },
-                    {
                         data: 'profit',
                         name: 'profit',
                         className: 'inline-block',
@@ -471,6 +349,128 @@
                             }
 
                             return data + '%';
+                        }
+                    },
+                    {
+                        data: 'amazon.updatedAt',
+                        name: 'amazon.updatedAt',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (type === 'display') {
+                                let currentDate = new Date();
+                                const date = new Date(data)
+                                let timeDiff = currentDate.getTime() - date.getTime();
+
+                                let seconds = Math.floor(timeDiff / 1000);
+                                let minutes = Math.floor(seconds / 60);
+                                let hours = Math.floor(minutes / 60);
+                                let days = Math.floor(hours / 24);
+
+                                if (days > 0) {
+                                    return days + " days ago";
+                                } else if (hours > 0) {
+                                    return hours + " hours ago";
+                                } else if (minutes > 0) {
+                                    return minutes + " minutes ago";
+                                } else {
+                                    return "a few seconds before";
+                                }
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'updatedAt',
+                        name: 'updatedAt',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (type === 'display') {
+                                let currentDate = new Date();
+                                const date = new Date(data)
+                                let timeDiff = currentDate.getTime() - date.getTime();
+
+                                let seconds = Math.floor(timeDiff / 1000);
+                                let minutes = Math.floor(seconds / 60);
+                                let hours = Math.floor(minutes / 60);
+                                let days = Math.floor(hours / 24);
+
+                                if (days > 0) {
+                                    return days + " days ago";
+                                } else if (hours > 0) {
+                                    return hours + " hours ago";
+                                } else if (minutes > 0) {
+                                    return minutes + " minutes ago";
+                                } else {
+                                    return "a few seconds before";
+                                }
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'amazon.asin',
+                        name: 'amazon.asin',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (!data) {
+                                return ''
+                            }
+                            if (type === 'display') {
+                                return `<a href="https://amazon.com/dp/${data}">${data}</a>`
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'source.url',
+                        name: 'source.url',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (!data) {
+                                return ''
+                            }
+                            if (type === 'display') {
+                                const domain = data.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/)[1];
+                                if (!data.startsWith('http')) return `<a href="https://${data}">${domain}</a>`;
+
+                                return '<a href="' + data + '">' + domain + '</a>';
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: null,
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (!data) {
+                                return 'Coming Soon!'
+                            }
+
+                            if (type === 'display') {
+
+                                return 'Coming Soon!'
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'source.availability',
+                        name: 'source.availability',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (type === 'display') {
+                                if (data === false) {
+                                    return 'Out of Stock'
+                                } else if (data === true) {
+                                    return 'In Stock'
+                                }
+                            }
+                            return data;
                         }
                     },
                     {
@@ -694,9 +694,17 @@
                 },
                 order: [[1, 'asc']],
                 searchBuilder: {
-                    columns: [0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
+                    columns: [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29],
                     preDefined: {
                         criteria: [
+                            {
+                                condition: '=',
+                                data: 'Src UpdatedAt',
+                                origData: 'source.updatedAt',
+                                type: 'date',
+                                value: [dateFormat(new Date())],
+                                value1: dateFormat(new Date())
+                            },
                             {
                                 condition: '>=',
                                 data: 'Profit',
@@ -749,23 +757,7 @@
                         searchBuilderType: 'date',
                     },
                     {
-                        targets: 2,
-                        searchBuilder: {
-                            defaultCondition: '=',
-                        },
-                        searchBuilderTitle: 'Amazon Updated At',
-                        searchBuilderType: 'date',
-                    },
-                    {
                         targets: 3,
-                        searchBuilder: {
-                            defaultCondition: '=',
-                        },
-                        searchBuilderTitle: 'Lead Updated At',
-                        searchBuilderType: 'date',
-                    },
-                    {
-                        targets: 5,
                         searchBuilder: {
                             defaultCondition: '=',
                         },
@@ -773,20 +765,37 @@
                         searchBuilderType: 'string',
                     },
                     {
-                        targets: 9,
+                        targets: 6,
+                        searchBuilderTitle: 'Source Number Pack',
+                    },
+                    {
+                        targets: 7,
+                        searchBuilderTitle: 'Amazon Number Pack',
+                    },
+                    {
+                        targets: 12,
+                        searchBuilder: {
+                            defaultCondition: '=',
+                        },
+                        searchBuilderTitle: 'Amazon Updated At',
+                        searchBuilderType: 'date',
+                    },
+                    {
+                        targets: 13,
+                        searchBuilder: {
+                            defaultCondition: '=',
+                        },
+                        searchBuilderTitle: 'Lead Updated At',
+                        searchBuilderType: 'date',
+                    },
+                    {
+                        targets: 15,
                         searchBuilder: {
                             defaultCondition: 'contains',
                         },
                         searchBuilderTitle: 'Source URL',
                     },
-                    {
-                        targets: 10,
-                        searchBuilderTitle: 'Source Number Pack',
-                    },
-                    {
-                        targets: 11,
-                        searchBuilderTitle: 'Amazon Number Pack',
-                    },
+
                     {
                         targets: 18,
                         searchBuilder: {
@@ -804,11 +813,20 @@
                         searchBuilderType: 'string',
                     },
                     {
+                        targets: 20,
+                        searchBuilder: {
+                            defaultCondition: '=',
+                        },
+                        searchBuilderTitle: 'Category',
+                    },
+                    {
                         targets: 27,
+                        searchBuilderTitle: 'Source note',
                         searchBuilderType: 'string',
                     },
                     {
                         targets: 28,
+                        searchBuilderTitle: 'Amazon note',
                         searchBuilderType: 'string',
                     },
                 ],
@@ -949,37 +967,37 @@
                 <span>-</span>
                 <a class="toggle-vis" data-column="1">Src UpdatedAt</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="2">Amz UpdatedAt</a>
+                <a class="toggle-vis" data-column="2">Hide</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="3">Lead UpdatedAt</a>
+                <a class="toggle-vis" data-column="3">Status</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="4">Hide</a>
+                <a class="toggle-vis" data-column="4">Src Image</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="5">Status</a>
+                <a class="toggle-vis" data-column="5">Amazon Image</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="6">Src Image</a>
+                <a class="toggle-vis" data-column="6">Src Pack</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="7">Amazon Image</a>
+                <a class="toggle-vis" data-column="7">Amz Pack</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="8">ASIN</a>
+                <a class="toggle-vis" data-column="8">Src Price</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="9">Source URL</a>
+                <a class="toggle-vis" data-column="9">Amz Price</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="10">Src Pack</a>
+                <a class="toggle-vis" data-column="10">Profit</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="11">Amz Pack</a>
+                <a class="toggle-vis" data-column="11">ROI</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="12">Graph</a>
+                <a class="toggle-vis" data-column="12">Amz UpdatedAt</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="13">Src Price</a>
+                <a class="toggle-vis" data-column="13">Lead UpdatedAt</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="14">Amz Price</a>
+                <a class="toggle-vis" data-column="14">ASIN</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="15">Src Availability</a>
+                <a class="toggle-vis" data-column="15">Source URL</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="16">Profit</a>
+                <a class="toggle-vis" data-column="16">Graph</a>
                 <span>-</span>
-                <a class="toggle-vis" data-column="17">ROI</a>
+                <a class="toggle-vis" data-column="17">Src Availability</a>
                 <span>-</span>
                 <a class="toggle-vis" data-column="18">Src Title</a>
                 <span>-</span>
@@ -1010,22 +1028,22 @@
                 <tr>
                     <th>#</th>
                     <th>Src UpdatedAt</th>
-                    <th>Amz UpdatedAt</th>
-                    <th>Lead UpdatedAt</th>
                     <th>Hide</th>
                     <th>Status</th>
                     <th>Src Image</th>
                     <th>Amazon Image</th>
-                    <th>ASIN</th>
-                    <th>ASIN</th>
                     <th>Src Pack</th>
                     <th>Amz Pack</th>
-                    <th>Graph</th>
                     <th>Src Price</th>
                     <th>Amz Price</th>
-                    <th>Src Availability</th>
                     <th>Profit</th>
                     <th>ROI</th>
+                    <th>Amz UpdatedAt</th>
+                    <th>Lead UpdatedAt</th>
+                    <th>ASIN</th>
+                    <th>Src URL</th>
+                    <th>Graph</th>
+                    <th>Src Availability</th>
                     <th>Src Title</th>
                     <th>Amz Title</th>
                     <th>Category</th>
@@ -1044,22 +1062,22 @@
                 <tr>
                     <th>#</th>
                     <th>Src UpdatedAt</th>
-                    <th>Amz UpdatedAt</th>
-                    <th>Lead UpdatedAt</th>
                     <th>Hide</th>
                     <th>Status</th>
                     <th>Src Image</th>
                     <th>Amazon Image</th>
-                    <th>ASIN</th>
-                    <th>Src URL</th>
                     <th>Src Pack</th>
                     <th>Amz Pack</th>
-                    <th>Graph</th>
                     <th>Src Price</th>
                     <th>Amz Price</th>
-                    <th>Src Availability</th>
                     <th>Profit</th>
                     <th>ROI</th>
+                    <th>Amz UpdatedAt</th>
+                    <th>Lead UpdatedAt</th>
+                    <th>ASIN</th>
+                    <th>Src URL</th>
+                    <th>Graph</th>
+                    <th>Src Availability</th>
                     <th>Src Title</th>
                     <th>Amz Title</th>
                     <th>Category</th>
