@@ -51,6 +51,14 @@ html.dark #customForm fieldset.amazon legend {
     background-color: #a8ddec !important;
 }
 
+.pl-row {
+    background-color: rgba(196, 79, 234, 0.73) !important;
+}
+
+.hz-row {
+    background-color: rgba(196, 79, 234, 0.73) !important;
+}
+
 .match-row {
     background-color: #ceffce !important;
 }
