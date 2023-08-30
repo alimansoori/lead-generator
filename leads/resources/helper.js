@@ -7,7 +7,7 @@ function dateFormat(date) {
 }
 
 function getAjaxUrl() {
-    return "http://162.223.91.117:5000/api/leads"
+    return "http://127.0.0.1:5000/api/leads"
 }
 
 function columns() {
@@ -19,6 +19,8 @@ function columns() {
             render: function (data, type) {
                 if (type === 'display') {
                     return '<div class="action-buttons">' +
+                        '<div class="pl"><i class="fa fa-ban"></i></div> ' +
+                        '<div class="hz"><i class="fa fa-fire"></i></div> ' +
                         `<div class="row">${data}</div>` +
                         '<div class="refresh"><i class="fa fa-refresh"></i></div> ' +
                         '<div class="report"><i class="fa fa-user"></i></div> ' +
@@ -63,7 +65,6 @@ function columns() {
             className: 'bubble-edit inline-block',
             render: function (data, type) {
                 const todayy = new Date()
-                console.log(todayy.getFullYear() + '-' + todayy.getMonth() + '-' + todayy.getDate())
                 if (!data?.hiddenDays || data.hiddenDays === 0) {
                     return 'Allowed'
                 }
@@ -77,7 +78,6 @@ function columns() {
 
                         const futureDate = new Date(hiddenCreatedAt.getFullYear(), hiddenCreatedAt.getMonth(), hiddenCreatedAt.getDate() + hiddenDays);
 
-                        console.log(hiddenCreatedAt.getFullYear() + '-' + hiddenCreatedAt.getMonth() + '-' + hiddenCreatedAt.getDate())
                         const timeDiff = Math.abs(today - futureDate);
                         const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
 
@@ -306,7 +306,7 @@ function columns() {
         {
             data: 'amazon.isPL',
             name: 'amazon.isPL',
-            className: 'inline-block bubble-edit',
+            className: 'inline-block bubble-edit pl-cell',
             editField: ['amazon.isPL'],
             render: function (data, type) {
                 if (!data) return 'Not Set!'
@@ -324,7 +324,7 @@ function columns() {
         {
             data: 'amazon.isHZ',
             name: 'amazon.isHZ',
-            className: 'inline-block bubble-edit',
+            className: 'inline-block bubble-edit hz-cell',
             editField: ['amazon.isHZ'],
             render: function (data, type) {
                 if (!data) return 'Not Set!'
@@ -764,10 +764,10 @@ function editorFields() {
         attr: {
             type: "number"
         }
-    }, {
+    },/* {
         label: "Amazon ASIN:",
         name: "amazon.asin"
-    }, {
+    },*/ {
         label: "Number of Pack:",
         name: "amazon.numPack",
         def: 1,
@@ -784,7 +784,7 @@ function editorFields() {
         name: "amazon.isPL",
         options: [{label: "Yes", value: true}, {label: "No", value: false}],
         type: 'radio'
-    }, {
+    },/*, {
         label: "Amazon Price:",
         name: "amazon.price"
     }, {
@@ -794,8 +794,8 @@ function editorFields() {
         label: "Source Price:",
         name: "source.price",
         def: null,
-    }, {
-        label: "Number of Pack::",
+    },*/ {
+        label: "Number of Pack:",
         name: "source.numPack",
         def: 1,
         attr: {
@@ -814,52 +814,17 @@ function eventRefreshLink(table) {
 
         $.ajax({
             type: "GET",
-            url: getAjaxUrl() + rowData['_id'],
+            url: getAjaxUrl() + '/' + rowData['_id'],
             success: function (data) {
-                const resData = data.data
                 row.data({
-                    ...resData,
+                    ...data.data,
                 })
-
-                if (resData?.status === 'mis_match') {
-                    $(rowTag).removeClass('match-row');
-                    $(rowTag).removeClass('hidden-row');
-                    $(rowTag).addClass('mismatch-row');
-                } else if (resData?.amazon?.isPL) {
-                    $(rowTag).removeClass('match-row');
-                    $(rowTag).removeClass('mismatch-row');
-                    $(rowTag).removeClass('hidden-row');
-                    $(rowTag).removeClass('hz-row');
-                    $(rowTag).addClass('pl-row');
-                } else if (resData?.amazon?.isHZ) {
-                    $(rowTag).removeClass('match-row');
-                    $(rowTag).removeClass('mismatch-row');
-                    $(rowTag).removeClass('hidden-row');
-                    $(rowTag).removeClass('pl-row');
-                    $(rowTag).addClass('hz-row');
-                } else if (resData?.hiddenCreatedAt && resData?.hiddenDays) {
-                    const createdAt = new Date(resData.hiddenCreatedAt)
-                    const today = new Date()
-                    const hiddenDays = resData.hiddenDays
-
-                    const futureDate = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate() + hiddenDays);
-
-                    if (today < futureDate) {
-                        $(rowTag).removeClass('match-row');
-                        $(rowTag).removeClass('mismatch-row');
-                        $(rowTag).addClass('hidden-row');
-                    }
-                } else if (resData?.status === 'match') {
-                    $(rowTag).addClass('match-row');
-                } else {
-                    $(rowTag).removeClass('match-row');
-                    $(rowTag).removeClass('mismatch-row');
-                    $(rowTag).removeClass('hidden-row');
-                }
-                $('#example_processing').css('display', 'none')
+                successResLeadAjax(data, rowTag)
             }
 
         });
+
+        $('#example_processing').css('display', 'none')
     });
 }
 
@@ -942,4 +907,103 @@ function processingDom() {
         '  <div id="loading-text">LOADING</div>\n' +
         '  <div id="loading-content"></div>\n' +
         '</div>'
+}
+
+function eventPlClick(table) {
+    table.on('click', 'div.action-buttons .pl', function (e) {
+        let rowTag = e.target.closest('tr');
+        let row = table.row(rowTag);
+        let rowData = row.data();
+
+        $('#example_processing').css('display', 'block')
+
+        $.ajax({
+            type: "PUT",
+            url: getAjaxUrl() + '/' + rowData['_id'],
+            contentType: 'application/json',
+            data: JSON.stringify({
+                amazon: {
+                    isPL: !rowData?.amazon?.isPL
+                }
+            }),
+            dataType: 'json',
+            success: function (data) {
+                row.data({
+                    ...data.data,
+                }).draw(false)
+            }
+        });
+
+        $('#example_processing').css('display', 'none')
+    });
+}
+
+function eventHzClick(table) {
+    table.on('click', 'div.action-buttons .hz', function (e) {
+        let rowTag = e.target.closest('tr');
+        let row = table.row(rowTag);
+        let rowData = row.data();
+
+        $('#example_processing').css('display', 'block')
+
+        $.ajax({
+            type: "PUT",
+            url: getAjaxUrl() + '/' + rowData['_id'],
+            contentType: 'application/json',
+            data: JSON.stringify({
+                amazon: {
+                    isHZ: !rowData?.amazon?.isHZ
+                }
+            }),
+            dataType: 'json',
+            success: function (data) {
+                row.data({
+                    ...data.data,
+                }).draw(false)
+            }
+        });
+
+        $('#example_processing').css('display', 'none')
+    });
+}
+
+function successResLeadAjax(data, rowTag) {
+    console.log(rowTag)
+    const resData = data.data
+
+    if (resData?.status === 'mis_match') {
+        $(rowTag).removeClass('match-row');
+        $(rowTag).removeClass('hidden-row');
+        $(rowTag).addClass('mismatch-row');
+    } else if (resData?.amazon?.isPL) {
+        $(rowTag).removeClass('match-row');
+        $(rowTag).removeClass('mismatch-row');
+        $(rowTag).removeClass('hidden-row');
+        $(rowTag).removeClass('hz-row');
+        $(rowTag).addClass('pl-row');
+    } else if (resData?.amazon?.isHZ) {
+        $(rowTag).removeClass('match-row');
+        $(rowTag).removeClass('mismatch-row');
+        $(rowTag).removeClass('hidden-row');
+        $(rowTag).removeClass('pl-row');
+        $(rowTag).addClass('hz-row');
+    } else if (resData?.hiddenCreatedAt && resData?.hiddenDays) {
+        const createdAt = new Date(resData.hiddenCreatedAt)
+        const today = new Date()
+        const hiddenDays = resData.hiddenDays
+
+        const futureDate = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate() + hiddenDays);
+
+        if (today < futureDate) {
+            $(rowTag).removeClass('match-row');
+            $(rowTag).removeClass('mismatch-row');
+            $(rowTag).addClass('hidden-row');
+        }
+    } else if (resData?.status === 'match') {
+        $(rowTag).addClass('match-row');
+    } else {
+        $(rowTag).removeClass('match-row');
+        $(rowTag).removeClass('mismatch-row');
+        $(rowTag).removeClass('hidden-row');
+    }
 }
