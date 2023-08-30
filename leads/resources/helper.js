@@ -309,7 +309,6 @@ function columns() {
             className: 'inline-block bubble-edit pl-cell',
             editField: ['amazon.isPL'],
             render: function (data, type) {
-                if (!data) return 'Not Set!'
 
                 if (type === 'display') {
                     if (!data) {
@@ -317,6 +316,8 @@ function columns() {
                     }
                     return 'Yes'
                 }
+
+                if (!data) return false
 
                 return data;
             }
@@ -327,7 +328,6 @@ function columns() {
             className: 'inline-block bubble-edit hz-cell',
             editField: ['amazon.isHZ'],
             render: function (data, type) {
-                if (!data) return 'Not Set!'
 
                 if (type === 'display') {
                     if (!data) {
@@ -335,6 +335,7 @@ function columns() {
                     }
                     return 'Yes'
                 }
+                if (!data) return false
 
                 return data;
             }
