@@ -7,7 +7,7 @@ function dateFormat(date) {
 }
 
 function getAjaxUrl() {
-    return "http://127.0.0.1:5000/api/leads?key=yy7s39X2wQhqxYtp8euO"
+    return "http://162.223.91.117:5000/api/leads?key=yy7s39X2wQhqxYtp8euO"
 }
 
 function columns() {
