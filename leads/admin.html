@@ -47,12 +47,11 @@
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
                 ajax: {
-                    url: getAjaxUrl(),
+                    url: getAjaxUrl() + '?key=' + getKey(),
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: function (d) {
-                        console.log(d)
                         return JSON.stringify(d);
                     },
                 },
@@ -66,6 +65,10 @@
                 ajax: {
                     url: getAjaxUrl(),
                     type: "GET",
+                    data: function (d) {
+                        d.key = getKey()
+                        return d;
+                    },
                 },
                 columns: columns(),
                 select: {

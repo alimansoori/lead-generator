@@ -7,7 +7,11 @@ function dateFormat(date) {
 }
 
 function getAjaxUrl() {
-    return "http://162.223.91.117:5000/api/leads?key=yy7s39X2wQhqxYtp8euO"
+    return "http://162.223.91.117:5000/api/leads"
+}
+
+function getKey() {
+    return "yy7s39X2wQhqxYtp8euO"
 }
 
 function columns() {
@@ -815,7 +819,7 @@ function eventRefreshLink(table) {
 
         $.ajax({
             type: "GET",
-            url: getAjaxUrl() + '/' + rowData['_id'],
+            url: getAjaxUrl() + '/' + rowData['_id'] + '?key=' + getKey(),
             success: function (data) {
                 row.data({
                     ...data.data,
@@ -920,7 +924,7 @@ function eventPlClick(table) {
 
         $.ajax({
             type: "PUT",
-            url: getAjaxUrl() + '/' + rowData['_id'],
+            url: getAjaxUrl() + '/' + rowData['_id'] + '?key=' + getKey(),
             contentType: 'application/json',
             data: JSON.stringify({
                 amazon: {
@@ -949,7 +953,7 @@ function eventHzClick(table) {
 
         $.ajax({
             type: "PUT",
-            url: getAjaxUrl() + '/' + rowData['_id'],
+            url: getAjaxUrl() + '/' + rowData['_id'] + '?key=' + getKey(),
             contentType: 'application/json',
             data: JSON.stringify({
                 amazon: {
