@@ -105,9 +105,14 @@
                 dom: 'BfrtipQ',
                 scrollX: true,
                 processing: true,
-                language: {
-                    processing: processingDom()
-                },
+                /*language: {
+                    processing: function () {
+                        return '<div id="loading-wrapper">\n' +
+                            '  <div id="loading-text">LOADING</div>\n' +
+                            '  <div id="loading-content"></div>\n' +
+                            '</div>'
+                    }
+                },*/
                 serverSide: true,
                 // stateSave: true,
                 pageLength: 20,

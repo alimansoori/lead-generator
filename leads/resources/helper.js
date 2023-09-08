@@ -7,7 +7,7 @@ function dateFormat(date) {
 }
 
 function getAjaxUrl() {
-    return "http://162.223.91.117:5000/api/leads"
+    return "http://127.0.0.1:5000/api/leads"
 }
 
 function getKey() {
@@ -601,7 +601,7 @@ function columns() {
             className: 'text-max-length',
             render: function (data, type) {
                 if (!data) {
-                    return '-----'
+                    return '----'
                 }
                 if (type === 'display') {
                     return `<span title="${data}">${data}</span>`;
@@ -907,7 +907,7 @@ function rowCallback(row, data) {
     }
 }
 
-function processingDom() {
+const processingDom = () => {
     return '<div id="loading-wrapper">\n' +
         '  <div id="loading-text">LOADING</div>\n' +
         '  <div id="loading-content"></div>\n' +
