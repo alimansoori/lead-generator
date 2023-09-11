@@ -10,6 +10,10 @@ function getAjaxUrl() {
     return "http://162.223.91.117:5000/api/leads"
 }
 
+function getAjaxUrlTest() {
+    return "http://162.223.91.117:5000/api/test"
+}
+
 function getKey() {
     return "yy7s39X2wQhqxYtp8euO"
 }
