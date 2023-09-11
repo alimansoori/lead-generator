@@ -2,9 +2,12 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <link rel="shortcut icon" type="image/ico" href="https://oabeans.com/wp-content/uploads/2020/08/OABeans-logo-150x150.png">
+    <link rel="shortcut icon" type="image/ico"
+          href="https://oabeans.com/wp-content/uploads/2020/08/OABeans-logo-150x150.png">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, user-scalable=no">
     <title>Lead Generator</title>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/datetime/1.5.0/css/dataTables.dateTime.min.css">
@@ -16,6 +19,7 @@
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="resources/fixedHeader.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="resources/syntax/shCore.css">
+    <link rel="stylesheet" type="text/css" href="resources/demo.css">
     <link rel="stylesheet" type="text/css" href="resources/demo.css">
     <link rel="stylesheet" type="text/css" href="../css/style.css">
 
@@ -35,82 +39,55 @@
     <script type="text/javascript" language="javascript" src="resources/dataTables.fixedHeader.min.js"></script>
     <script type="text/javascript" language="javascript" src="resources/syntax/shCore.js"></script>
     <script type="text/javascript" language="javascript" src="resources/demo.js"></script>
+    <script type="text/javascript" language="javascript" src="resources/helper.js"></script>
     <script type="text/javascript" language="javascript" src="resources/editor-demo.js"></script>
     <script type="text/javascript" language="javascript" class="init">
-        function formatDate() {
-            const date = new Date()
-            date.setDate(date.getDate() - 5);
-
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            return `${year}-${month}-${day}`;
-        }
-
         let editor;
 
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
                 ajax: {
-                    url: "http://162.223.91.117:3000/api/1.0/test",
+                    url: getAjaxUrlTest() + '?key=' + getKey(),
                     type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: function (d) {
+                        return JSON.stringify(d);
+                    },
                 },
                 table: "#example",
                 template: '#customForm',
-                fields: [{
-                    label: "Status:",
-                    name: "status",
-                    type: 'select',
-                    def: 'not_checked'
-                }, {
-                    label: "Hidden Days:",
-                    name: "hiddenDays",
-                    def: 0,
-                    attr: {
-                        type: "number"
-                    }
-                }, {
-                    label: "Amazon ASIN:",
-                    name: "amazon.asin"
-                }, {
-                    label: "Number of Pack:",
-                    name: "amazon.numPack",
-                    def: 1,
-                    attr: {
-                        type: "number"
-                    }
-                }, {
-                    label: "Amazon Price:",
-                    name: "amazon.price"
-                }, {
-                    label: "Source URL:",
-                    name: "source.url"
-                }, {
-                    label: "Source Price:",
-                    name: "source.price",
-                    def: null,
-                }, {
-                    label: "Number of Pack::",
-                    name: "source.numPack",
-                    def: 1,
-                    attr: {
-                        type: "number"
-                    }
-                }]
+                fields:editorFields()
             });
 
             var table = $('#example').DataTable({
                 fixedHeader: true,
                 ajax: {
-                    url: "http://162.223.91.117:3000/api/1.0/test",
-                    type: "POST",
+                    url: getAjaxUrlTest(),
+                    type: "GET",
+                    data: function (d) {
+                        d.key = getKey()
+                        return d;
+                    },
                 },
                 columns: [
                     {
-                        data: null,
-                        defaultContent: '',
-                        className: 'select-checkbox',
-                        orderable: false
+                        data: 'seq',
+                        name: 'seq',
+                        editField: ['report[]'],
+                        render: function (data, type) {
+                            if (type === 'display') {
+                                return '<div class="action-buttons">' +
+                                    '<div class="pl"><i class="fa fa-ban"></i></div> ' +
+                                    '<div class="hz"><i class="fa fa-fire"></i></div> ' +
+                                    `<div class="row">${data}</div>` +
+                                    '<div class="refresh"><i class="fa fa-refresh"></i></div> ' +
+                                    '<div class="report"><i class="fa fa-user"></i></div> ' +
+                                    '</div>';
+                            }
+
+                            return data;
+                        }
                     },
                     {
                         data: 'source.updatedAt',
@@ -122,10 +99,10 @@
                                 const date = new Date(data)
                                 let timeDiff = currentDate.getTime() - date.getTime();
 
-                                let seconds = Math.ceil(timeDiff / 1000);
-                                let minutes = Math.ceil(seconds / 60);
-                                let hours = Math.ceil(minutes / 60);
-                                let days = Math.ceil(hours / 24);
+                                let seconds = Math.floor(timeDiff / 1000);
+                                let minutes = Math.floor(seconds / 60);
+                                let hours = Math.floor(minutes / 60);
+                                let days = Math.floor(hours / 24);
 
                                 if (days > 0) {
                                     return days + " days ago";
@@ -146,22 +123,27 @@
                         name: 'hiddenDays',
                         className: 'bubble-edit inline-block',
                         render: function (data, type) {
+                            const todayy = new Date()
                             if (!data?.hiddenDays || data.hiddenDays === 0) {
                                 return 'Allowed'
                             }
 
                             if (type === 'display') {
+
                                 if (data?.hiddenCreatedAt) {
-                                    const createdAt = new Date(data.hiddenCreatedAt)
+                                    const hiddenCreatedAt = new Date(data.hiddenCreatedAt)
                                     const today = new Date()
                                     const hiddenDays = data.hiddenDays
 
-                                    const futureDate = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate() + hiddenDays);
+                                    const futureDate = new Date(hiddenCreatedAt.getFullYear(), hiddenCreatedAt.getMonth(), hiddenCreatedAt.getDate() + hiddenDays);
 
-                                    if (today > futureDate) {
+                                    const timeDiff = Math.abs(today - futureDate);
+                                    const daysDiff = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+
+                                    if (today > futureDate || daysDiff === 0) {
                                         return 'Allowed'
                                     } else {
-                                        return 'Forbidden'
+                                        return `${daysDiff} days Forbidden`
                                     }
                                 }
                             }
@@ -217,39 +199,6 @@
                         title: 'Amazon Image'
                     },
                     {
-                        data: 'amazon.asin',
-                        name: 'amazon.asin',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (!data) {
-                                return ''
-                            }
-                            if (type === 'display') {
-                                return `<a href="https://amazon.com/dp/${data}">${data}</a>`
-                            }
-
-                            return data;
-                        }
-                    },
-                    {
-                        data: 'source.url',
-                        name: 'source.url',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (!data) {
-                                return ''
-                            }
-                            if (type === 'display') {
-                                const domain = data.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/)[1];
-                                if (!data.startsWith('http')) return `<a href="https://${data}">${domain}</a>`;
-
-                                return '<a href="' + data + '">' + domain + '</a>';
-                            }
-
-                            return data;
-                        }
-                    },
-                    {
                         data: 'source.numPack',
                         name: 'source.numPack',
                         className: 'inline-block bubble-edit',
@@ -274,22 +223,6 @@
                             }
                             if (type === 'display') {
                                 return `${data} Pack`
-                            }
-
-                            return data;
-                        }
-                    },
-                    {
-                        data: null,
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (!data) {
-                                return 'Coming Soon!'
-                            }
-
-                            if (type === 'display') {
-
-                                return 'Coming Soon!'
                             }
 
                             return data;
@@ -341,21 +274,6 @@
                         }
                     },
                     {
-                        data: 'source.availability',
-                        name: 'source.availability',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (type === 'display') {
-                                if (data === false) {
-                                    return 'Out of Stock'
-                                } else if (data === true) {
-                                    return 'In Stock'
-                                }
-                            }
-                            return data;
-                        }
-                    },
-                    {
                         data: 'profit',
                         name: 'profit',
                         className: 'inline-block',
@@ -397,6 +315,177 @@
                             }
 
                             return data + '%';
+                        }
+                    },
+                    {
+                        data: 'source.url',
+                        name: 'source.url',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (!data) {
+                                return ''
+                            }
+                            if (type === 'display') {
+                                const domain = data.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/)[1];
+                                if (!data.startsWith('http')) return `<a href="https://${data}">${domain}</a>`;
+
+                                return '<a href="' + data + '">' + domain + '</a>';
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'amazon.asin',
+                        name: 'amazon.asin',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (!data) {
+                                return ''
+                            }
+                            if (type === 'display') {
+                                return `<a href="https://amazon.com/dp/${data}">${data}</a>`
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'amazon.brand',
+                        name: 'amazon.brand',
+                        className: 'inline-block',
+                        render: function (data) {
+                            if (!data) {
+                                return ''
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'amazon.isPL',
+                        name: 'amazon.isPL',
+                        className: 'inline-block bubble-edit pl-cell',
+                        editField: ['amazon.isPL'],
+                        render: function (data, type) {
+
+                            if (type === 'display') {
+                                if (!data) {
+                                    return 'No'
+                                }
+                                return 'Yes'
+                            }
+
+                            if (!data) return false
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'amazon.isHZ',
+                        name: 'amazon.isHZ',
+                        className: 'inline-block bubble-edit hz-cell',
+                        editField: ['amazon.isHZ'],
+                        render: function (data, type) {
+
+                            if (type === 'display') {
+                                if (!data) {
+                                    return 'No'
+                                }
+                                return 'Yes'
+                            }
+                            if (!data) return false
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'amazon.updatedAt',
+                        name: 'amazon.updatedAt',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (type === 'display') {
+                                let currentDate = new Date();
+                                const date = new Date(data)
+                                let timeDiff = currentDate.getTime() - date.getTime();
+
+                                let seconds = Math.floor(timeDiff / 1000);
+                                let minutes = Math.floor(seconds / 60);
+                                let hours = Math.floor(minutes / 60);
+                                let days = Math.floor(hours / 24);
+
+                                if (days > 0) {
+                                    return days + " days ago";
+                                } else if (hours > 0) {
+                                    return hours + " hours ago";
+                                } else if (minutes > 0) {
+                                    return minutes + " minutes ago";
+                                } else {
+                                    return "a few seconds before";
+                                }
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'updatedAt',
+                        name: 'updatedAt',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (type === 'display') {
+                                let currentDate = new Date();
+                                const date = new Date(data)
+                                let timeDiff = currentDate.getTime() - date.getTime();
+
+                                let seconds = Math.floor(timeDiff / 1000);
+                                let minutes = Math.floor(seconds / 60);
+                                let hours = Math.floor(minutes / 60);
+                                let days = Math.floor(hours / 24);
+
+                                if (days > 0) {
+                                    return days + " days ago";
+                                } else if (hours > 0) {
+                                    return hours + " hours ago";
+                                } else if (minutes > 0) {
+                                    return minutes + " minutes ago";
+                                } else {
+                                    return "a few seconds before";
+                                }
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: null,
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (!data) {
+                                return 'Coming Soon!'
+                            }
+
+                            if (type === 'display') {
+
+                                return 'Coming Soon!'
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'source.availability',
+                        name: 'source.availability',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (type === 'display') {
+                                if (data === false) {
+                                    return 'Out of Stock'
+                                } else if (data === true) {
+                                    return 'In Stock'
+                                }
+                            }
+                            return data;
                         }
                     },
                     {
@@ -530,65 +619,6 @@
                         }
                     },
                     {
-                        data: 'amazon.updatedAt',
-                        name: 'amazon.updatedAt',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (type === 'display') {
-                                let currentDate = new Date();
-                                const date = new Date(data)
-                                let timeDiff = currentDate.getTime() - date.getTime();
-
-                                let seconds = Math.floor(timeDiff / 1000);
-                                let minutes = Math.floor(seconds / 60);
-                                let hours = Math.floor(minutes / 60);
-                                let days = Math.floor(hours / 24);
-
-                                if (days > 0) {
-                                    return days + " days ago";
-                                } else if (hours > 0) {
-                                    return hours + " hours ago";
-                                } else if (minutes > 0) {
-                                    return minutes + " minutes ago";
-                                } else {
-                                    return "a few seconds before";
-                                }
-                            }
-
-                            return data;
-                        }
-                    },
-
-                    {
-                        data: 'updatedAt',
-                        name: 'updatedAt',
-                        className: 'inline-block',
-                        render: function (data, type) {
-                            if (type === 'display') {
-                                let currentDate = new Date();
-                                const date = new Date(data)
-                                let timeDiff = currentDate.getTime() - date.getTime();
-
-                                let seconds = Math.floor(timeDiff / 1000);
-                                let minutes = Math.floor(seconds / 60);
-                                let hours = Math.floor(minutes / 60);
-                                let days = Math.floor(hours / 24);
-
-                                if (days > 0) {
-                                    return days + " days ago";
-                                } else if (hours > 0) {
-                                    return hours + " hours ago";
-                                } else if (minutes > 0) {
-                                    return minutes + " minutes ago";
-                                } else {
-                                    return "a few seconds before";
-                                }
-                            }
-
-                            return data;
-                        }
-                    },
-                    {
                         data: 'source.note',
                         name: 'source.note',
                         className: 'text-max-length',
@@ -620,91 +650,118 @@
                             return data;
                         }
                     },
+                    {
+                        data: 'report',
+                        name: 'report',
+                        className: 'text-max-length',
+                        render: function (data, type) {
+                            if (!data) {
+                                return '----'
+                            }
+                            if (type === 'display') {
+                                return `<span title="${data}">${data}</span>`;
+                            }
+
+                            return data;
+                        }
+                    },
                 ],
                 select: {
                     blurable: true,
-                    selector: 'td:first-child',
+                    selector: 'td:first-child div.row',
                     style: 'os'
                 },
+                /*buttons: [
+                    {extend: 'create', editor},
+                    {extend: 'edit', editor},
+                    {extend: 'remove', editor},
+                ],*/
                 rowCallback: function (row, data) {
-                    if (data?.status === 'mis_match') {
-                        $(row).addClass('mismatch-row');
-                    } else if (data?.hiddenCreatedAt && data?.hiddenDays) {
-                        const createdAt = new Date(data.hiddenCreatedAt)
-                        const today = new Date()
-                        const hiddenDays = data.hiddenDays
-
-                        const futureDate = new Date(createdAt.getFullYear(), createdAt.getMonth(), createdAt.getDate() + hiddenDays);
-
-                        if (today < futureDate) {
-                            $(row).addClass('hidden-row');
-                        }
-                    } else if (data?.status === 'match') {
-                        $(row).addClass('match-row');
-                    }
-
+                    rowCallback(row, data)
                 },
                 searchBuilder: {
-                    columns: [3, 11, 12, 14, 15, 22, 23],
+                    columns: [3, 8, 9, 10, 11, 27, 28],
+                    /*preDefined: {
+                        criteria: [
+                            {
+                                condition: '=',
+                                data: 'Src UpdatedAt',
+                                origData: 'source.updatedAt',
+                                type: 'date',
+                                value: [dateFormat(new Date())],
+                                value1: dateFormat(new Date())
+                            },
+                        ],
+                        logic: 'AND'
+                    }*/
                 },
+                order: [[1, 'asc']],
                 columnDefs: [
                     {
                         targets: 3,
                         searchBuilder: {
                             defaultCondition: '=',
                         },
+                        searchBuilderTitle: 'Status',
+                        searchBuilderType: 'string',
                     },
                     {
-                        targets: 11,
+                        targets: 27,
                         searchBuilder: {
                             defaultCondition: '<',
                         },
+                        searchBuilderTitle: 'BSR',
                     },
                     {
-                        targets: 12,
-                        searchBuilder: {
-                            defaultCondition: '<',
-                        },
-                    },
-                    {
-                        targets: 25,
+                        targets:28,
                         searchBuilder: {
                             defaultCondition: '>',
                         },
-                        // searchBuilderTitle: 'Amazon Updated At',
-                        searchBuilderType: 'date',
-                    },
-                    {
-                        targets: 14,
+                        searchBuilderTitle: 'Sales',
+                        searchBuilderType: 'num',
+                    },{
+                        targets:10,
                         searchBuilder: {
                             defaultCondition: '>',
                         },
-                    },
-                    {
-                        targets: 15,
+                        searchBuilderTitle: 'Profit',
+                    },{
+                        targets:11,
                         searchBuilder: {
                             defaultCondition: '>',
                         },
+                        searchBuilderTitle: 'ROI',
                     },
-                    {
-                        targets: 22,
-                        searchBuilder: {
-                            defaultCondition: '<',
-                        },
-                    },
-                    {
-                        targets: 23,
-                        searchBuilder: {
-                            defaultCondition: '>',
-                        },
-                    }
                 ],
-                dom: 'frtipQ',
+                dom: 'BfrtipQ',
                 scrollX: true,
                 processing: true,
+                /*language: {
+                    processing: function () {
+                        return '<div id="loading-wrapper">\n' +
+                            '  <div id="loading-text">LOADING</div>\n' +
+                            '  <div id="loading-content"></div>\n' +
+                            '</div>'
+                    }
+                },*/
                 serverSide: true,
                 stateSave: true,
+                pageLength: 20,
             });
+
+            // Activate the bubble editor on click of a table cell
+            /*table.on('click', 'tbody td.bubble-edit', function (e) {
+                editor.bubble(this);
+            });*/
+
+            /*table.on('click', 'tbody td:first-child div.action-buttons .report', function (e) {
+                editor.bubble($(this).closest('td').get(0));
+            });*/
+
+
+            eventRefreshLink(table)
+
+            jumpToPage(table)
 
         });
 
@@ -722,20 +779,91 @@
                 <fieldset class="leadTmp">
                     <legend>Lead</legend>
                     <div data-editor-template="status"></div>
+                    <div data-editor-template="report[]"></div>
                     <div data-editor-template="hiddenDays"></div>
                 </fieldset>
                 <fieldset class="source">
                     <legend>source</legend>
-                    <div data-editor-template="source.url"></div>
-                    <div data-editor-template="source.price"></div>
+<!--                    <div data-editor-template="source.url"></div>-->
+<!--                    <div data-editor-template="source.price"></div>-->
                     <div data-editor-template="source.numPack"></div>
                 </fieldset>
                 <fieldset class="amazon">
                     <legend>Amazon</legend>
-                    <div data-editor-template="amazon.asin"></div>
-                    <div data-editor-template="amazon.price"></div>
+<!--                    <div data-editor-template="amazon.asin"></div>-->
+<!--                    <div data-editor-template="amazon.price"></div>-->
                     <div data-editor-template="amazon.numPack"></div>
+                    <div data-editor-template="amazon.isPL"></div>
+                    <div data-editor-template="amazon.isHZ"></div>
                 </fieldset>
+            </div>
+            <div id="jump_page_parent" class="dataTables_filter"><label>Jump to Page: <input type="number"
+                                                                                             id="jump_page"
+                                                                                             class="jump_page"
+                                                                                             placeholder=""
+                                                                                             aria-controls="example"></label>
+            </div>
+            <div style="display: none">
+                <span>Toggle column:</span>
+                <a class="toggle-vis" data-column="0">ID</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="1">Src UpdatedAt</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="2">Hide</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="3">Status</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="4">Src Image</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="5">Amazon Image</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="6">Src Pack</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="7">Amz Pack</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="8">Src Price</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="9">Amz Price</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="10">Profit</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="11">ROI</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="12">Amz UpdatedAt</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="13">Lead UpdatedAt</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="14">ASIN</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="15">Source URL</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="16">Graph</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="17">Src Availability</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="18">Src Title</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="19">Amz Title</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="20">Category</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="21">Is IP</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="22">Size</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="23">Seller</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="24">Bsr</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="25">Sales</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="26">Match Quality</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="27">Src Note</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="28">Amz Note</a>
+                <span>-</span>
+                <a class="toggle-vis" data-column="29">Report</a>
             </div>
             <table id="example" class="cell-border dataTable" style="width:100%">
                 <thead>
@@ -746,16 +874,21 @@
                     <th>Status</th>
                     <th>Src Image</th>
                     <th>Amazon Image</th>
-                    <th>ASIN</th>
-                    <th>Src URL</th>
                     <th>Src Pack</th>
                     <th>Amz Pack</th>
-                    <th>Graph</th>
                     <th>Src Price</th>
                     <th>Amz Price</th>
-                    <th>Src Availability</th>
                     <th>Profit</th>
                     <th>ROI</th>
+                    <th>Src URL</th>
+                    <th>ASIN</th>
+                    <th>Brand</th>
+                    <th>PL</th>
+                    <th>HZ</th>
+                    <th>Amz UpdatedAt</th>
+                    <th>Lead UpdatedAt</th>
+                    <th>Graph</th>
+                    <th>Src Availability</th>
                     <th>Src Title</th>
                     <th>Amz Title</th>
                     <th>Category</th>
@@ -765,10 +898,9 @@
                     <th>Bsr</th>
                     <th>Sales</th>
                     <th>Match Quality</th>
-                    <th>Amz UpdatedAt</th>
-                    <th>Lead UpdatedAt</th>
                     <th>Src Note</th>
                     <th>Amz Note</th>
+                    <th>Report</th>
                 </tr>
                 </thead>
                 <tfoot>
@@ -779,16 +911,21 @@
                     <th>Status</th>
                     <th>Src Image</th>
                     <th>Amazon Image</th>
-                    <th>ASIN</th>
-                    <th>Src URL</th>
                     <th>Src Pack</th>
                     <th>Amz Pack</th>
-                    <th>Graph</th>
                     <th>Src Price</th>
                     <th>Amz Price</th>
-                    <th>Src Availability</th>
                     <th>Profit</th>
                     <th>ROI</th>
+                    <th>Src URL</th>
+                    <th>ASIN</th>
+                    <th>Brand</th>
+                    <th>PL</th>
+                    <th>HZ</th>
+                    <th>Amz UpdatedAt</th>
+                    <th>Lead UpdatedAt</th>
+                    <th>Graph</th>
+                    <th>Src Availability</th>
                     <th>Src Title</th>
                     <th>Amz Title</th>
                     <th>Category</th>
@@ -798,15 +935,13 @@
                     <th>Bsr</th>
                     <th>Sales</th>
                     <th>Match Quality</th>
-                    <th>Amz UpdatedAt</th>
-                    <th>Lead UpdatedAt</th>
                     <th>Src Note</th>
                     <th>Amz Note</th>
+                    <th>Report</th>
                 </tr>
                 </tfoot>
             </table>
         </div>
-
     </section>
 </div>
 </body>
