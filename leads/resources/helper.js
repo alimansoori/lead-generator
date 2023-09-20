@@ -658,6 +658,34 @@ function columnDefs() {
             },
         },
         {
+            targets: 8,
+            searchBuilderTitle: 'Source Price',
+            searchBuilder: {
+                defaultCondition: '<',
+            },
+        },
+        {
+            targets: 9,
+            searchBuilderTitle: 'Amazon Price',
+            searchBuilder: {
+                defaultCondition: '<',
+            },
+        },
+        {
+            targets: 10,
+            searchBuilderTitle: 'Profit',
+            searchBuilder: {
+                defaultCondition: '>',
+            },
+        },
+        {
+            targets: 11,
+            searchBuilderTitle: 'ROI',
+            searchBuilder: {
+                defaultCondition: '>',
+            },
+        },
+        {
             targets: 12,
             searchBuilder: {
                 defaultCondition: 'contains',
@@ -866,24 +894,24 @@ function jumpToPage(table) {
 
 function rowCallback(row, data) {
     if (data?.status === 'mis_match') {
+        console.log('mis_match')
         $(row).removeClass('match-row');
         $(row).removeClass('hidden-row');
         $(row).removeClass('pl-row');
         $(row).removeClass('hz-row');
         $(row).addClass('mismatch-row');
-    } else if (data?.amazon?.isPL) {
-        $(row).removeClass('match-row');
-        $(row).removeClass('hidden-row');
-        $(row).removeClass('hz-row');
+    }
+
+    if (data?.status === 'match') {
+        console.log('match')
         $(row).removeClass('mismatch-row');
-        $(row).addClass('pl-row');
-    } else if (data?.amazon?.isHZ) {
-        $(row).removeClass('match-row');
         $(row).removeClass('hidden-row');
         $(row).removeClass('pl-row');
-        $(row).removeClass('mismatch-row');
-        $(row).addClass('hz-row');
-    } else if (data?.hiddenCreatedAt && data?.hiddenDays && data?.status !== 'mis_match') {
+        $(row).removeClass('hz-row');
+        $(row).addClass('match-row');
+    }
+
+    if (data?.hiddenCreatedAt && data?.hiddenDays && data?.status !== 'mis_match') {
         const createdAt = new Date(data.hiddenCreatedAt)
         const today = new Date()
         const hiddenDays = data.hiddenDays
@@ -902,13 +930,24 @@ function rowCallback(row, data) {
             $(row).removeClass('pl-row');
             $(row).removeClass('hz-row');
         }
-    } else if (data?.status === 'match') {
+    }
+
+    if (data?.amazon?.isPL) {
+        $(row).removeClass('match-row');
+        $(row).removeClass('hidden-row');
+        $(row).removeClass('hz-row');
         $(row).removeClass('mismatch-row');
+        $(row).addClass('pl-row');
+    }
+
+    if (data?.amazon?.isHZ) {
+        $(row).removeClass('match-row');
         $(row).removeClass('hidden-row');
         $(row).removeClass('pl-row');
-        $(row).removeClass('hz-row');
-        $(row).addClass('match-row');
+        $(row).removeClass('mismatch-row');
+        $(row).addClass('hz-row');
     }
+
 }
 
 const processingDom = () => {
@@ -983,20 +1022,20 @@ function successResLeadAjax(data, rowTag) {
     if (resData?.status === 'mis_match') {
         $(rowTag).removeClass('match-row');
         $(rowTag).removeClass('hidden-row');
-        $(rowTag).addClass('mismatch-row');
-    } else if (resData?.amazon?.isPL) {
-        $(rowTag).removeClass('match-row');
-        $(rowTag).removeClass('mismatch-row');
-        $(rowTag).removeClass('hidden-row');
+        $(rowTag).removeClass('pl-row');
         $(rowTag).removeClass('hz-row');
-        $(rowTag).addClass('pl-row');
-    } else if (resData?.amazon?.isHZ) {
-        $(rowTag).removeClass('match-row');
+        $(rowTag).addClass('mismatch-row');
+    }
+
+    if (resData?.status === 'match') {
         $(rowTag).removeClass('mismatch-row');
         $(rowTag).removeClass('hidden-row');
         $(rowTag).removeClass('pl-row');
-        $(rowTag).addClass('hz-row');
-    } else if (resData?.hiddenCreatedAt && resData?.hiddenDays) {
+        $(rowTag).removeClass('hz-row');
+        $(rowTag).addClass('match-row');
+    }
+
+    if (resData?.hiddenCreatedAt && resData?.hiddenDays) {
         const createdAt = new Date(resData.hiddenCreatedAt)
         const today = new Date()
         const hiddenDays = resData.hiddenDays
@@ -1006,13 +1045,25 @@ function successResLeadAjax(data, rowTag) {
         if (today < futureDate) {
             $(rowTag).removeClass('match-row');
             $(rowTag).removeClass('mismatch-row');
+            $(rowTag).removeClass('pl-row');
+            $(rowTag).removeClass('hz-row');
             $(rowTag).addClass('hidden-row');
         }
-    } else if (resData?.status === 'match') {
-        $(rowTag).addClass('match-row');
-    } else {
+    }
+
+    if (resData?.amazon?.isPL) {
         $(rowTag).removeClass('match-row');
         $(rowTag).removeClass('mismatch-row');
         $(rowTag).removeClass('hidden-row');
+        $(rowTag).removeClass('hz-row');
+        $(rowTag).addClass('pl-row');
+    }
+
+    if (resData?.amazon?.isHZ) {
+        $(rowTag).removeClass('match-row');
+        $(rowTag).removeClass('mismatch-row');
+        $(rowTag).removeClass('hidden-row');
+        $(rowTag).removeClass('pl-row');
+        $(rowTag).addClass('hz-row');
     }
 }

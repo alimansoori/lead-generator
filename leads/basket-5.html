@@ -40,6 +40,7 @@
     <script type="text/javascript" language="javascript" src="resources/demo.js"></script>
     <script type="text/javascript" language="javascript" src="resources/helper.js"></script>
     <script type="text/javascript" language="javascript" src="resources/editor-demo.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
     <script type="text/javascript" language="javascript" class="init">
         let editor;
 
@@ -77,6 +78,10 @@
                 },
                 buttons: [
                     {extend: 'edit', editor},
+                    {
+                        extend: 'colvis',
+                        postfixButtons: [ 'colvisRestore' ]
+                    }
                 ],
                 rowCallback: function (row, data) {
                     rowCallback(row, data)
@@ -233,14 +238,14 @@
                 dom: 'BfrtipQ',
                 scrollX: true,
                 processing: true,
-                /*language: {
+                language: {
                     processing: function () {
                         return '<div id="loading-wrapper">\n' +
                             '  <div id="loading-text">LOADING</div>\n' +
                             '  <div id="loading-content"></div>\n' +
                             '</div>'
                     }
-                },*/
+                },
                 serverSide: true,
                 // stateSave: true,
                 pageLength: 20,
