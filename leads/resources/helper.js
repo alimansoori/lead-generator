@@ -125,10 +125,16 @@ function columns() {
             className: 'inline-block',
             orderable: false,
             render: function (source) {
-                if (source?.images?.length) {
-                    return `<a href="${source?.url}"><img src="${source?.images[0]}" style="min-width: 100px; min-height: 100px; opacity: 1;max-width: 100px; max-height: 100px;"></a>`
+                let url = source?.url
+                let image = source?.images[0]
+
+                if (url.startsWith('www')) url = 'https://' + url
+                if (!image) {
+                    image = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ88Y6Jdz9jnkpHRk-0BCC80cboBoaTghwOLA&usqp=CAU"
                 }
-                return `<a href="${source?.url}"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ88Y6Jdz9jnkpHRk-0BCC80cboBoaTghwOLA&usqp=CAU" style="min-width: 100px; min-height: 100px; opacity: 1;max-width: 100px; max-height: 100px;"></a>`
+                if (image?.startsWith("//")) image = "https:" + image
+
+                return `<a href="${url}"><img src="${image}" style="min-width: 100px; min-height: 100px; opacity: 1;max-width: 100px; max-height: 100px;"></a>`
             },
             defaultContent: `<img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ88Y6Jdz9jnkpHRk-0BCC80cboBoaTghwOLA&usqp=CAU" style="min-width: 100px; min-height: 100px; opacity: 1;max-width: 100px; max-height: 100px;">`,
             title: 'Src Image'
