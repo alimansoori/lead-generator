@@ -630,13 +630,27 @@ function columns() {
 function columnDefs() {
     return [
         {
+            target: 15,
+            visible: false,
+            searchBuilderTitle: 'PL',
+        },
+        {
+            target: 16,
+            visible: false,
+            searchBuilderTitle: 'HZ',
+        },
+        {
+            target: 19,
+            visible: false,
+            searchBuilderTitle: 'Graph',
+        },
+        {
             targets: 0,
             searchBuilder: {
                 defaultCondition: '>',
             },
             searchBuilderTitle: 'ID',
         },
-
         {
             targets: 1,
             searchBuilder: {
