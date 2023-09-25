@@ -7,11 +7,11 @@ function dateFormat(date) {
 }
 
 function getAjaxUrl() {
-    return "http://162.223.91.117:5000/api/leads"
+    return "http://127.0.0.1:5000/api/leads"
 }
 
 function getAjaxUrlTest() {
-    return "http://162.223.91.117:5000/api/test"
+    return "http://127.0.0.1:5000/api/test"
 }
 
 function getKey() {
@@ -275,10 +275,14 @@ function columns() {
                     return ''
                 }
                 if (type === 'display') {
-                    const domain = data.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/)[1];
-                    if (!data.startsWith('http')) return `<a href="https://${data}">${domain}</a>`;
+                    try {
+                        const domain = data.match(/^(?:https?:\/\/)?(?:[^@\n]+@)?(?:www\.)?([^:\/\n?]+)/)[1];
+                        if (!data.startsWith('http')) return `<a href="https://${data}">${domain}</a>`;
 
-                    return '<a href="' + data + '">' + domain + '</a>';
+                        return '<a href="' + data + '">' + domain + '</a>';
+                    } catch (e) {
+                        return 'Url is invalid'
+                    }
                 }
 
                 return data;
