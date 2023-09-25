@@ -94,12 +94,44 @@
                     preDefined: {
                         criteria: [
                             {
-                                condition: '=',
-                                data: 'Src UpdatedAt',
-                                origData: 'source.updatedAt',
-                                type: 'date',
-                                value: [dateFormat(new Date())],
-                                value1: dateFormat(new Date())
+                                condition: '!=',
+                                data: 'Status',
+                                origData: 'status',
+                                type: 'string',
+                                value: ['mis_match'],
+                                value1: 'mis_match'
+                            },
+                            {
+                                condition: '!=',
+                                data: 'Seller',
+                                origData: 'amazon.seller',
+                                type: 'string',
+                                value: ['Amazon'],
+                                value1: 'Amazon'
+                            },
+                            {
+                                condition: '>',
+                                data: 'Sales',
+                                origData: 'amazon.mSales',
+                                type: 'num',
+                                value: [5],
+                                value1: 5
+                            },
+                            {
+                                condition: '>',
+                                data: 'Amazon Price',
+                                origData: 'amazon.price',
+                                type: 'num',
+                                value: ['15'],
+                                value1: '15'
+                            },
+                            {
+                                condition: '>',
+                                data: 'BSR',
+                                origData: 'amazon.bsr',
+                                type: 'num',
+                                value: ['0'],
+                                value1: '0'
                             },
                         ],
                         logic: 'AND'
