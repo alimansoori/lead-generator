@@ -7,11 +7,11 @@ function dateFormat(date) {
 }
 
 function getAjaxUrl() {
-    return "http://162.223.91.117:5000/api/leads"
+    return "http://127.0.0.1:5000/api/leads"
 }
 
 function getAjaxUrlTest() {
-    return "http://162.223.91.117:5000/api/test"
+    return "http://127.0.0.1:5000/api/test"
 }
 
 function getKey() {
@@ -624,6 +624,21 @@ function columns() {
                 return data;
             }
         },
+        {
+            data: 'sourceData',
+            name: 'sourceData',
+            className: 'text-max-length',
+            render: function (data, type) {
+                if (!data) {
+                    return '----'
+                }
+                if (type === 'display') {
+                    return `<span title="${data}">${data}</span>`;
+                }
+
+                return data;
+            }
+        },
     ]
 }
 
@@ -638,6 +653,11 @@ function columnDefs() {
             target: 16,
             visible: false,
             searchBuilderTitle: 'HZ',
+        },
+        {
+            target: 33,
+            visible: false,
+            searchBuilderTitle: 'Source Data',
         },
         {
             target: 19,
@@ -805,7 +825,7 @@ function columnDefs() {
 }
 
 function searchBuilderColumns() {
-    return [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 17, 18, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31, 32]
+    return [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31, 32, 33]
 }
 
 function editorFields() {

@@ -68,7 +68,7 @@
                     type: "GET",
                     data: function (d) {
                         d.key = getKey()
-                        return d;
+                        return d
                     },
                 },
                 columns: columns(),
@@ -133,6 +133,40 @@
                                 value: ['0'],
                                 value1: '0'
                             },
+                            {
+                                criteria: [
+                                    {
+                                        condition: '!=',
+                                        data: 'Source Data',
+                                        origData: 'sourceData',
+                                        type: 'string',
+                                        value: ['finder'],
+                                        value1: 'finder'
+                                    },
+                                    {
+                                        criteria: [
+                                            {
+                                                condition: '=',
+                                                data: 'Source Data',
+                                                origData: 'sourceData',
+                                                type: 'string',
+                                                value: ['finder'],
+                                                value1: 'finder'
+                                            },
+                                            {
+                                                condition: '>=',
+                                                data: 'Match Quality',
+                                                origData: 'matchQuality',
+                                                type: 'num',
+                                                value: [85],
+                                                value1: 85
+                                            },
+                                        ],
+                                        logic: 'AND'
+                                    }
+                                ],
+                                logic: 'OR'
+                            }
                         ],
                         logic: 'AND'
                     }
@@ -311,6 +345,7 @@
                     <th>Src Note</th>
                     <th>Amz Note</th>
                     <th>Report</th>
+                    <th>Source Data</th>
                 </tr>
                 </thead>
                 <tfoot>
@@ -348,6 +383,7 @@
                     <th>Src Note</th>
                     <th>Amz Note</th>
                     <th>Report</th>
+                    <th>Source Data</th>
                 </tr>
                 </tfoot>
             </table>
