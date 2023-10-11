@@ -48,7 +48,7 @@
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
                 ajax: {
-                    url: getAjaxUrl() + '/leads?key=' + getKey(),
+                    url: getAjaxUrl() + 'coupons?key=' + getKeyParam(),
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -64,7 +64,7 @@
             var table = $('#example').DataTable({
                 fixedHeader: true,
                 ajax: {
-                    url: getAjaxUrl() + '/leads',
+                    url: getAjaxUrl(),
                     type: "GET",
                     data: function (d) {
                         d.key = getKey()

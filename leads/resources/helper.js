@@ -7,7 +7,7 @@ function dateFormat(date) {
 }
 
 function getAjaxUrl() {
-    return "http://162.223.91.117:5000/api/leads"
+    return "http://162.223.91.117:5000/api"
 }
 
 function getAjaxUrlTest() {
@@ -16,6 +16,11 @@ function getAjaxUrlTest() {
 
 function getKey() {
     return "yy7s39X2wQhqxYtp8euO"
+}
+
+function getKeyParam() {
+    const urlParams = new URLSearchParams(window.location.search)
+    return urlParams.get('key')
 }
 
 function columns() {
