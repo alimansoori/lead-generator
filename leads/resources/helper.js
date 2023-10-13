@@ -202,9 +202,6 @@ function columns() {
                 }
                 if (type === 'display') {
                     let color = '#000000';
-                    if (data > 70) {
-                        color = 'red';
-                    }
 
                     return `<span style="color:${color}">${number}</span>`;
                 }
@@ -312,6 +309,87 @@ function columns() {
                 }
 
                 return data;
+            }
+        },
+        {
+            data: 'couponPrice',
+            name: 'couponPrice',
+            className: 'inline-block',
+            render: function (data, type) {
+                let number = DataTable.render
+                    .number(',', '.', 2, '$')
+                    .display(data);
+
+                if (!data) {
+                    return ''
+                }
+                if (type === 'display') {
+                    let color = '#000000';
+
+                    return `<span style="color:${color}">${number}</span>`;
+                }
+
+                return number;
+            }
+        },
+        {
+            data: 'couponProfit',
+            name: 'couponProfit',
+            className: 'inline-block',
+            render: function (data, type) {
+                let number = DataTable.render
+                    .number(',', '.', 2, '$')
+                    .display(data);
+
+                if (!data) {
+                    return ''
+                }
+                if (type === 'display') {
+                    let color = 'green';
+                    if (data < 5) {
+                        color = 'red';
+                    }
+
+                    return `<span style="color:${color}">${number}</span>`;
+                }
+
+                return number;
+            }
+        },
+        {
+            data: 'couponRoi',
+            name: 'couponRoi',
+            className: 'inline-block',
+            render: function (data, type) {
+                if (!data) {
+                    return ''
+                }
+                if (type === 'display') {
+                    let color = 'green';
+                    if (data < 30) {
+                        color = 'red';
+                    }
+
+                    return `<span style="color:${color}">${data}%</span>`;
+                }
+
+                return data + '%';
+            }
+        },
+        {
+            data: 'source.coupon',
+            name: 'source.coupon',
+            className: 'inline-block',
+            render: function (data, type) {
+                if (!data) {
+                    return null
+                }
+
+                if (type === 'display') {
+                    return data?.code + ', ' + data?.discountPercent + '%'
+                }
+
+                return data?._id;
             }
         },
         {
@@ -647,28 +725,12 @@ function columns() {
     ]
 }
 
+function searchBuilderColumns() {
+    return [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37]
+}
+
 function columnDefs() {
     return [
-        {
-            target: 15,
-            visible: false,
-            searchBuilderTitle: 'PL',
-        },
-        {
-            target: 16,
-            visible: false,
-            searchBuilderTitle: 'HZ',
-        },
-        {
-            target: 33,
-            visible: false,
-            searchBuilderTitle: 'Source Data',
-        },
-        {
-            target: 19,
-            visible: false,
-            searchBuilderTitle: 'Graph',
-        },
         {
             targets: 0,
             searchBuilder: {
@@ -683,6 +745,13 @@ function columnDefs() {
             },
             searchBuilderTitle: 'Source Updated At',
             searchBuilderType: 'date',
+        },
+        {
+            targets: 2,
+            searchBuilder: {
+                defaultCondition: '=',
+            },
+            searchBuilderTitle: 'Hide',
         },
         {
             targets: 3,
@@ -742,14 +811,59 @@ function columnDefs() {
             searchBuilderTitle: 'Source URL',
         },
         {
+            targets: 13,
+            searchBuilder: {
+                defaultCondition: '=',
+            },
+            searchBuilderTitle: 'ASIN',
+        },
+        {
             targets: 14,
+            searchBuilder: {
+                defaultCondition: '>',
+            },
+            searchBuilderTitle: 'Src price after coupon',
+        },
+        {
+            targets: 15,
+            searchBuilder: {
+                defaultCondition: '>',
+            },
+            searchBuilderTitle: 'Profit (C)',
+        },
+        {
+            targets: 16,
+            searchBuilder: {
+                defaultCondition: '>',
+            },
+            searchBuilderTitle: 'ROI (C)',
+        },
+        {
+            targets: 17,
+            searchBuilder: {
+                defaultCondition: 'contains',
+            },
+            searchBuilderTitle: 'Coupon code',
+        },
+        {
+            targets: 18,
             searchBuilder: {
                 defaultCondition: 'contains',
             },
             searchBuilderTitle: 'Brand',
         },
         {
-            targets: 17,
+            target: 19,
+            visible: false,
+            searchBuilderTitle: 'PL',
+        },
+        {
+            target: 20,
+            visible: false,
+            searchBuilderTitle: 'HZ',
+        },
+        {
+            targets: 21,
             searchBuilder: {
                 defaultCondition: '=',
             },
@@ -757,7 +871,8 @@ function columnDefs() {
             searchBuilderType: 'date',
         },
         {
-            targets: 18,
+            targets: 22,
+            visible: false,
             searchBuilder: {
                 defaultCondition: '=',
             },
@@ -765,7 +880,16 @@ function columnDefs() {
             searchBuilderType: 'date',
         },
         {
-            targets: 21,
+            target: 23,
+            visible: false,
+            searchBuilderTitle: 'Graph',
+        },
+        {
+            target: 24,
+            searchBuilderTitle: 'Availability',
+        },
+        {
+            targets: 25,
             searchBuilder: {
                 defaultCondition: 'contains',
             },
@@ -773,7 +897,7 @@ function columnDefs() {
             searchBuilderType: 'string',
         },
         {
-            targets: 22,
+            targets: 26,
             searchBuilder: {
                 defaultCondition: 'contains',
             },
@@ -781,21 +905,39 @@ function columnDefs() {
             searchBuilderType: 'string',
         },
         {
-            targets: 23,
+            targets: 27,
             searchBuilder: {
                 defaultCondition: '=',
             },
             searchBuilderTitle: 'Category',
         },
         {
-            targets: 27,
+            targets: 28,
+            visible: false,
+            searchBuilderTitle: 'Is IP?',
+        },
+        {
+            targets: 29,
+            visible: false,
+            searchBuilderTitle: 'Size',
+        },
+        {
+            targets: 30,
+            visible: false,
+            searchBuilder: {
+                defaultCondition: '=',
+            },
+            searchBuilderTitle: 'Seller',
+        },
+        {
+            targets: 31,
             searchBuilder: {
                 defaultCondition: '<',
             },
             searchBuilderTitle: 'BSR',
         },
         {
-            targets: 28,
+            targets: 32,
             searchBuilder: {
                 defaultCondition: '>',
             },
@@ -803,7 +945,15 @@ function columnDefs() {
             searchBuilderType: 'num',
         },
         {
-            targets: 30,
+            targets: 33,
+            visible: false,
+            searchBuilder: {
+                defaultCondition: '>',
+            },
+            searchBuilderTitle: 'Quality',
+        },
+        {
+            targets: 34,
             searchBuilderTitle: 'Source note',
             searchBuilder: {
                 defaultCondition: 'contains',
@@ -811,7 +961,7 @@ function columnDefs() {
             searchBuilderType: 'string',
         },
         {
-            targets: 31,
+            targets: 35,
             searchBuilderTitle: 'Amazon note',
             searchBuilder: {
                 defaultCondition: 'contains',
@@ -819,18 +969,20 @@ function columnDefs() {
             searchBuilderType: 'string',
         },
         {
-            targets: 32,
+            targets: 36,
+            visible: false,
             searchBuilderTitle: 'Report',
             searchBuilder: {
                 defaultCondition: '=',
             },
             searchBuilderType: 'string',
         },
+        {
+            target: 37,
+            visible: false,
+            searchBuilderTitle: 'Source Data',
+        },
     ]
-}
-
-function searchBuilderColumns() {
-    return [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 25, 26, 27, 28, 29, 30, 31, 32, 33]
 }
 
 function editorFields() {

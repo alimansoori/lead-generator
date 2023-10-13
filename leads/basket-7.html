@@ -47,7 +47,7 @@
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
                 ajax: {
-                    url: getAjaxUrl() + '/leads?key=' + getKey(),
+                    url: getAjaxUrl() + '/leads?key=' + getKeyParam(),
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -66,7 +66,7 @@
                     url: getAjaxUrl() + '/leads',
                     type: "GET",
                     data: function (d) {
-                        d.key = getKey()
+                        d.key = getKeyParam()
                         return d;
                     },
                 },
@@ -99,20 +99,56 @@
                                 value1: dateFormat(new Date())
                             },
                             {
-                                condition: '>=',
-                                data: 'Profit',
-                                origData: 'profit',
-                                type: 'num-ftm',
-                                value: ['4'],
-                                value1: '4'
-                            }, {
-                                condition: '>',
-                                data: 'ROI',
-                                origData: 'roi',
-                                type: 'num-ftm',
-                                value: ['30'],
-                                value1: '30'
-                            }, {
+                                criteria: [
+                                    {
+                                        criteria: [
+                                            {
+                                                condition: '>=',
+                                                data: 'Profit',
+                                                origData: 'profit',
+                                                type: 'num-ftm',
+                                                value: ['4'],
+                                                value1: '4'
+                                            }, {
+                                                condition: '>',
+                                                data: 'ROI',
+                                                origData: 'roi',
+                                                type: 'num-ftm',
+                                                value: ['30'],
+                                                value1: '30'
+                                            }
+                                        ],
+                                        logic: 'AND'
+                                    },
+                                    {
+                                        criteria: [
+                                            {
+                                                condition: '>=',
+                                                data: 'Profit (C)',
+                                                origData: 'couponProfit',
+                                                type: 'num-ftm',
+                                                value: ['4'],
+                                                value1: '4'
+                                            }, {
+                                                condition: '>',
+                                                data: 'ROI (C)',
+                                                origData: 'couponRoi',
+                                                type: 'num-ftm',
+                                                value: ['30'],
+                                                value1: '30'
+                                            }, {
+                                                condition: '!null',
+                                                data: 'Coupon',
+                                                origData: 'source.coupon',
+                                                type: 'string',
+                                            }
+                                        ],
+                                        logic: 'AND'
+                                    },
+                                ],
+                                logic: 'OR'
+                            },
+                            {
                                 condition: '=',
                                 data: 'Availability',
                                 origData: 'source.availability',
@@ -236,68 +272,6 @@
                                                                                              placeholder=""
                                                                                              aria-controls="example"></label>
             </div>
-            <div style="display: none">
-                <span>Toggle column:</span>
-                <a class="toggle-vis" data-column="0">ID</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="1">Src UpdatedAt</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="2">Hide</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="3">Status</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="4">Src Image</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="5">Amazon Image</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="6">Src Pack</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="7">Amz Pack</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="8">Src Price</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="9">Amz Price</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="10">Profit</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="11">ROI</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="12">Amz UpdatedAt</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="13">Lead UpdatedAt</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="14">ASIN</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="15">Source URL</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="16">Graph</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="17">Src Availability</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="18">Src Title</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="19">Amz Title</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="20">Category</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="21">Is IP</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="22">Size</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="23">Seller</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="24">Bsr</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="25">Sales</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="26">Match Quality</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="27">Src Note</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="28">Amz Note</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="29">Report</a>
-            </div>
             <table id="example" class="cell-border dataTable" style="width:100%">
                 <thead>
                 <tr>
@@ -315,6 +289,10 @@
                     <th>ROI</th>
                     <th>Src URL</th>
                     <th>ASIN</th>
+                    <th>Src Price (C)</th>
+                    <th>Profit (C)</th>
+                    <th>ROI (C)</th>
+                    <th>Coupon</th>
                     <th>Brand</th>
                     <th>PL</th>
                     <th>HZ</th>
@@ -353,6 +331,10 @@
                     <th>ROI</th>
                     <th>Src URL</th>
                     <th>ASIN</th>
+                    <th>Src Price (C)</th>
+                    <th>Profit (C)</th>
+                    <th>ROI (C)</th>
+                    <th>Coupon</th>
                     <th>Brand</th>
                     <th>PL</th>
                     <th>HZ</th>

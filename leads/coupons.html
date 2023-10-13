@@ -41,14 +41,15 @@
     <script type="text/javascript" language="javascript" src="resources/demo.js"></script>
     <script type="text/javascript" language="javascript" src="resources/helper.js"></script>
     <script type="text/javascript" language="javascript" src="resources/editor-demo.js"></script>
-    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
+    <script type="text/javascript" language="javascript"
+            src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
     <script type="text/javascript" language="javascript" class="init">
         let editor;
 
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
                 ajax: {
-                    url: getAjaxUrl() + 'coupons?key=' + getKeyParam(),
+                    url: getAjaxUrl() + '/coupon?key=' + getKeyParam(),
                     type: "POST",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -57,123 +58,53 @@
                     },
                 },
                 table: "#example",
-                template: '#customForm',
-                fields:editorFields()
+                fields: [{
+                    label: "Site Name:",
+                    name: "siteName",
+                }, {
+                    label: "Coupon Code:",
+                    name: 'code',
+                }, {
+                    label: "Discount Percent:",
+                    name: "discountPercent",
+                    attr: {
+                        type: "number"
+                    }
+                }]
             });
 
             var table = $('#example').DataTable({
                 fixedHeader: true,
                 ajax: {
-                    url: getAjaxUrl(),
+                    url: getAjaxUrl() + '/coupon',
                     type: "GET",
                     data: function (d) {
-                        d.key = getKey()
+                        d.key = getKeyParam()
                         return d
                     },
                 },
-                columns: columns(),
-                select: {
-                    blurable: true,
-                    selector: 'td:first-child div.row',
-                    style: 'os'
-                },
+                columns: [
+                    {
+                        data: 'siteName',
+                        name: 'siteName',
+                    },
+                    {
+                        data: 'code',
+                        name: 'code',
+                    },
+                    {
+                        data: 'discountPercent',
+                        name: 'discountPercent',
+                    },
+                ],
+                select: true,
                 buttons: [
                     {extend: 'create', editor},
                     {extend: 'edit', editor},
                     {extend: 'remove', editor},
-                    {
-                        extend: 'colvis',
-                        postfixButtons: [ 'colvisRestore' ]
-                    }
                 ],
-                rowCallback: function (row, data) {
-                    rowCallback(row, data)
-                },
-                searchBuilder: {
-                    columns: searchBuilderColumns(),
-                    preDefined: {
-                        criteria: [
-                            {
-                                condition: '!=',
-                                data: 'Status',
-                                origData: 'status',
-                                type: 'string',
-                                value: ['mis_match'],
-                                value1: 'mis_match'
-                            },
-                            {
-                                condition: '!=',
-                                data: 'Seller',
-                                origData: 'amazon.seller',
-                                type: 'string',
-                                value: ['Amazon'],
-                                value1: 'Amazon'
-                            },
-                            {
-                                condition: '>',
-                                data: 'Sales',
-                                origData: 'amazon.mSales',
-                                type: 'num',
-                                value: [5],
-                                value1: 5
-                            },
-                            {
-                                condition: '>',
-                                data: 'Amazon Price',
-                                origData: 'amazon.price',
-                                type: 'num',
-                                value: ['15'],
-                                value1: '15'
-                            },
-                            {
-                                condition: '>',
-                                data: 'BSR',
-                                origData: 'amazon.bsr',
-                                type: 'num',
-                                value: ['0'],
-                                value1: '0'
-                            },
-                            {
-                                criteria: [
-                                    {
-                                        condition: '!=',
-                                        data: 'Source Data',
-                                        origData: 'sourceData',
-                                        type: 'string',
-                                        value: ['finder'],
-                                        value1: 'finder'
-                                    },
-                                    {
-                                        criteria: [
-                                            {
-                                                condition: '=',
-                                                data: 'Source Data',
-                                                origData: 'sourceData',
-                                                type: 'string',
-                                                value: ['finder'],
-                                                value1: 'finder'
-                                            },
-                                            {
-                                                condition: '>=',
-                                                data: 'Match Quality',
-                                                origData: 'matchQuality',
-                                                type: 'num',
-                                                value: [85],
-                                                value1: 85
-                                            },
-                                        ],
-                                        logic: 'AND'
-                                    }
-                                ],
-                                logic: 'OR'
-                            }
-                        ],
-                        logic: 'AND'
-                    }
-                },
                 order: [[1, 'asc']],
-                columnDefs: columnDefs(),
-                dom: 'BfrtipQ',
+                dom: 'Bfrtip',
                 scrollX: true,
                 processing: true,
                 language: {
@@ -184,29 +115,8 @@
                             '</div>'
                     }
                 },
-                serverSide: true,
-                // stateSave: true,
                 pageLength: 20,
             });
-
-            // Activate the bubble editor on click of a table cell
-            table.on('click', 'tbody td.bubble-edit', function (e) {
-                editor.bubble(this);
-            });
-
-            table.on('click', 'tbody td:first-child div.action-buttons .report', function (e) {
-                editor.bubble($(this).closest('td').get(0));
-            });
-
-            eventPlClick(table)
-
-            eventHzClick(table)
-
-            eventRefreshLink(table)
-
-            jumpToPage(table)
-
-            toggleHideShowColumns()
         });
 
 
@@ -219,172 +129,20 @@
             <img src="resources/logo.png">
         </a>
         <div class="demo-html">
-            <div id="customForm">
-                <fieldset class="leadTmp">
-                    <legend>Lead</legend>
-                    <div data-editor-template="status"></div>
-                    <div data-editor-template="report[]"></div>
-                    <div data-editor-template="hiddenDays"></div>
-                </fieldset>
-                <fieldset class="source">
-                    <legend>source</legend>
-<!--                    <div data-editor-template="source.url"></div>-->
-<!--                    <div data-editor-template="source.price"></div>-->
-                    <div data-editor-template="source.numPack"></div>
-                </fieldset>
-                <fieldset class="amazon">
-                    <legend>Amazon</legend>
-<!--                    <div data-editor-template="amazon.asin"></div>-->
-<!--                    <div data-editor-template="amazon.price"></div>-->
-                    <div data-editor-template="amazon.numPack"></div>
-                    <div data-editor-template="amazon.isPL"></div>
-                    <div data-editor-template="amazon.isHZ"></div>
-                </fieldset>
-            </div>
-            <div id="jump_page_parent" class="dataTables_filter"><label>Jump to Page: <input type="number"
-                                                                                             id="jump_page"
-                                                                                             class="jump_page"
-                                                                                             placeholder=""
-                                                                                             aria-controls="example"></label>
-            </div>
-            <div style="display: none">
-                <span>Toggle column:</span>
-                <a class="toggle-vis" data-column="0">ID</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="1">Src UpdatedAt</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="2">Hide</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="3">Status</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="4">Src Image</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="5">Amazon Image</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="6">Src Pack</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="7">Amz Pack</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="8">Src Price</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="9">Amz Price</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="10">Profit</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="11">ROI</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="12">Amz UpdatedAt</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="13">Lead UpdatedAt</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="14">ASIN</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="15">Source URL</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="16">Graph</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="17">Src Availability</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="18">Src Title</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="19">Amz Title</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="20">Category</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="21">Is IP</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="22">Size</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="23">Seller</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="24">Bsr</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="25">Sales</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="26">Match Quality</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="27">Src Note</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="28">Amz Note</a>
-                <span>-</span>
-                <a class="toggle-vis" data-column="29">Report</a>
-            </div>
             <table id="example" class="cell-border dataTable" style="width:100%">
                 <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Src UpdatedAt</th>
-                    <th>Hide</th>
-                    <th>Status</th>
-                    <th>Src Image</th>
-                    <th>Amazon Image</th>
-                    <th>Src Pack</th>
-                    <th>Amz Pack</th>
-                    <th>Src Price</th>
-                    <th>Amz Price</th>
-                    <th>Profit</th>
-                    <th>ROI</th>
-                    <th>Src URL</th>
-                    <th>ASIN</th>
-                    <th>Brand</th>
-                    <th>PL</th>
-                    <th>HZ</th>
-                    <th>Amz UpdatedAt</th>
-                    <th>Lead UpdatedAt</th>
-                    <th>Graph</th>
-                    <th>Src Availability</th>
-                    <th>Src Title</th>
-                    <th>Amz Title</th>
-                    <th>Category</th>
-                    <th>Is IP</th>
-                    <th>Size</th>
-                    <th>Seller</th>
-                    <th>Bsr</th>
-                    <th>Sales</th>
-                    <th>Match Quality</th>
-                    <th>Src Note</th>
-                    <th>Amz Note</th>
-                    <th>Report</th>
-                    <th>Source Data</th>
-                </tr>
+                    <tr>
+                        <th>Site Name</th>
+                        <th>Coupon Code</th>
+                        <th>Discount Percent</th>
+                    </tr>
                 </thead>
                 <tfoot>
-                <tr>
-                    <th>#</th>
-                    <th>Src UpdatedAt</th>
-                    <th>Hide</th>
-                    <th>Status</th>
-                    <th>Src Image</th>
-                    <th>Amazon Image</th>
-                    <th>Src Pack</th>
-                    <th>Amz Pack</th>
-                    <th>Src Price</th>
-                    <th>Amz Price</th>
-                    <th>Profit</th>
-                    <th>ROI</th>
-                    <th>Src URL</th>
-                    <th>ASIN</th>
-                    <th>Brand</th>
-                    <th>PL</th>
-                    <th>HZ</th>
-                    <th>Amz UpdatedAt</th>
-                    <th>Lead UpdatedAt</th>
-                    <th>Graph</th>
-                    <th>Src Availability</th>
-                    <th>Src Title</th>
-                    <th>Amz Title</th>
-                    <th>Category</th>
-                    <th>Is IP</th>
-                    <th>Size</th>
-                    <th>Seller</th>
-                    <th>Bsr</th>
-                    <th>Sales</th>
-                    <th>Match Quality</th>
-                    <th>Src Note</th>
-                    <th>Amz Note</th>
-                    <th>Report</th>
-                    <th>Source Data</th>
-                </tr>
+                    <tr>
+                        <th>Site Name</th>
+                        <th>Coupon Code</th>
+                        <th>Discount Percent</th>
+                    </tr>
                 </tfoot>
             </table>
         </div>
