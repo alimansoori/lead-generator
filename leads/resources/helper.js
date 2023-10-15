@@ -887,6 +887,9 @@ function columnDefs() {
         {
             target: 24,
             searchBuilderTitle: 'Availability',
+            searchBuilder: {
+                defaultCondition: '=',
+            },
         },
         {
             targets: 25,
