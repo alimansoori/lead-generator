@@ -1171,7 +1171,7 @@ function eventPlClick(table) {
 
         $.ajax({
             type: "PUT",
-            url: getAjaxUrl() + '/' + rowData['_id'] + '?key=' + getKey(),
+            url: getAjaxUrl() + '/leads/' + rowData['_id'] + '?key=' + getKey(),
             contentType: 'application/json',
             data: JSON.stringify({
                 amazon: {
@@ -1200,7 +1200,7 @@ function eventHzClick(table) {
 
         $.ajax({
             type: "PUT",
-            url: getAjaxUrl() + '/' + rowData['_id'] + '?key=' + getKey(),
+            url: getAjaxUrl() + '/leads/' + rowData['_id'] + '?key=' + getKey(),
             contentType: 'application/json',
             data: JSON.stringify({
                 amazon: {
