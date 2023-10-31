@@ -72,7 +72,7 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     data: function (d) {
-                        d.data[0].content = JSON.stringify(table.searchBuilder.getDetails())
+                        d.data[0].content = JSON.stringify(table.searchBuilder.getDetails(true))
                         return JSON.stringify(d);
                     },
                 },
