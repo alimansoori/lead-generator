@@ -17,6 +17,7 @@
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/buttons/2.4.0/css/buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/rowreorder/1.4.1/css/rowReorder.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="resources/fixedHeader.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="resources/syntax/shCore.css">
     <link rel="stylesheet" type="text/css" href="resources/demo.css">
@@ -35,6 +36,7 @@
             src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
     <script type="text/javascript" language="javascript"
             src="https://cdn.datatables.net/datetime/1.3.1/js/dataTables.dateTime.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/rowreorder/1.4.1/js/dataTables.rowReorder.min.js"></script>
     <script type="text/javascript" language="javascript" src="../js/dataTables.editor.min.js"></script>
     <script type="text/javascript" language="javascript" src="resources/dataTables.fixedHeader.min.js"></script>
     <script type="text/javascript" language="javascript" src="resources/syntax/shCore.js"></script>
@@ -43,7 +45,9 @@
     <script type="text/javascript" language="javascript" src="resources/editor-demo.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
     <script type="text/javascript" language="javascript" class="init">
+        let table;
         let editor;
+        let searchQueueEditor;
 
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
@@ -61,7 +65,22 @@
                 fields:editorFields()
             });
 
-            var table = $('#example').DataTable({
+            searchQueueEditor = new $.fn.dataTable.Editor({
+                ajax: {
+                    url: getAjaxUrl() + '/search-queue?key=' + getKeyParam(),
+                    type: "POST",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: function (d) {
+                        d.data[0].content = JSON.stringify(table.searchBuilder.getDetails())
+                        return JSON.stringify(d);
+                    },
+                },
+                table: "#example",
+                fields:searchQueueEditorFields()
+            });
+
+            table = $('#example').DataTable({
                 fixedHeader: true,
                 ajax: {
                     url: getAjaxUrl() + '/leads',
@@ -81,6 +100,11 @@
                     {extend: 'create', editor},
                     {extend: 'edit', editor},
                     {extend: 'remove', editor},
+                    {
+                        extend: 'create',
+                        text: 'Search Queue',
+                        editor: searchQueueEditor
+                    },
                     {
                         extend: 'colvis',
                         postfixButtons: [ 'colvisRestore' ]
@@ -107,6 +131,7 @@
                 },
                 serverSide: true,
                 // stateSave: true,
+                rowReorder: true,
                 pageLength: 20,
             });
 

@@ -1005,10 +1005,7 @@ function editorFields() {
         attr: {
             type: "number"
         }
-    },/* {
-        label: "Amazon ASIN:",
-        name: "amazon.asin"
-    },*/ {
+    }, {
         label: "Number of Pack:",
         name: "amazon.numPack",
         def: 1,
@@ -1025,23 +1022,20 @@ function editorFields() {
         name: "amazon.isPL",
         options: [{label: "Yes", value: true}, {label: "No", value: false}],
         type: 'radio'
-    },/*, {
-        label: "Amazon Price:",
-        name: "amazon.price"
-    }, {
-        label: "Source URL:",
-        name: "source.url"
-    }, {
-        label: "Source Price:",
-        name: "source.price",
-        def: null,
-    },*/ {
+    },{
         label: "Number of Pack:",
         name: "source.numPack",
         def: 1,
         attr: {
             type: "number"
         }
+    }]
+}
+
+function searchQueueEditorFields() {
+    return [{
+        label: "Title:",
+        name: "title",
     }]
 }
 
@@ -1098,7 +1092,6 @@ function jumpToPage(table) {
 
 function rowCallback(row, data) {
     if (data?.status === 'mis_match') {
-        console.log('mis_match')
         $(row).removeClass('match-row');
         $(row).removeClass('hidden-row');
         $(row).removeClass('pl-row');
@@ -1107,7 +1100,6 @@ function rowCallback(row, data) {
     }
 
     if (data?.status === 'match') {
-        console.log('match')
         $(row).removeClass('mismatch-row');
         $(row).removeClass('hidden-row');
         $(row).removeClass('pl-row');
@@ -1220,7 +1212,6 @@ function eventHzClick(table) {
 }
 
 function successResLeadAjax(data, rowTag) {
-    console.log(rowTag)
     const resData = data.data
 
     if (resData?.status === 'mis_match') {
