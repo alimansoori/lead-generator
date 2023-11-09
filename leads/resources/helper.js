@@ -7,11 +7,11 @@ function dateFormat(date) {
 }
 
 function getAjaxUrl() {
-    return "http://127.0.0.1:5000/api"
+    return "http://162.223.91.117:5000/api"
 }
 
 function getAjaxUrlTest() {
-    return "http://127.0.0.1:5000/api/test"
+    return "http://162.223.91.117:5000/api/test"
 }
 
 function getKey() {
