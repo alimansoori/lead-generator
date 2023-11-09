@@ -62,15 +62,11 @@
                 fields: [{
                     label: "Title:",
                     name: "title",
-                },{
+                }, {
                     label: "Status:",
                     name: "status",
                     type: 'select',
                     def: 'init'
-                }, {
-                    label: "Content:",
-                    name: 'content',
-                    type: 'textarea'
                 }]
             });
 
@@ -94,8 +90,37 @@
                         name: 'status',
                     },
                     {
-                        data: 'content',
-                        name: 'content',
+                        data: 'total',
+                        name: 'total',
+                        render: function (data, type) {
+                            if (!data) {
+                                return ''
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'counter',
+                        name: 'counter',
+                        render: function (data, type) {
+                            if (!data) {
+                                return ''
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'note',
+                        name: 'note',
+                        render: function (data, type) {
+                            if (!data) {
+                                return ''
+                            }
+
+                            return data;
+                        }
                     },
                 ],
                 select: true,
@@ -131,18 +156,22 @@
         <div class="demo-html">
             <table id="example" class="cell-border dataTable" style="width:100%">
                 <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Status</th>
-                        <th>Content</th>
-                    </tr>
+                <tr>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Counter</th>
+                    <th>Note</th>
+                </tr>
                 </thead>
                 <tfoot>
-                    <tr>
-                        <th>Title</th>
-                        <th>Status</th>
-                        <th>Content</th>
-                    </tr>
+                <tr>
+                    <th>Title</th>
+                    <th>Status</th>
+                    <th>Total</th>
+                    <th>Counter</th>
+                    <th>Note</th>
+                </tr>
                 </tfoot>
             </table>
         </div>
