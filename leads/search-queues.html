@@ -82,6 +82,35 @@
                 },
                 columns: [
                     {
+                        data: 'createdAt',
+                        name: 'createdAt',
+                        className: 'inline-block',
+                        render: function (data, type) {
+                            if (type === 'display') {
+                                let currentDate = new Date();
+                                const date = new Date(data)
+                                let timeDiff = currentDate.getTime() - date.getTime();
+
+                                let seconds = Math.floor(timeDiff / 1000);
+                                let minutes = Math.floor(seconds / 60);
+                                let hours = Math.floor(minutes / 60);
+                                let days = Math.floor(hours / 24);
+
+                                if (days > 0) {
+                                    return days + " days ago";
+                                } else if (hours > 0) {
+                                    return hours + " hours ago";
+                                } else if (minutes > 0) {
+                                    return minutes + " minutes ago";
+                                } else {
+                                    return "a few seconds before";
+                                }
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
                         data: 'title',
                         name: 'title',
                     },
@@ -157,6 +186,7 @@
             <table id="example" class="cell-border dataTable" style="width:100%">
                 <thead>
                 <tr>
+                    <th>Date</th>
                     <th>Title</th>
                     <th>Status</th>
                     <th>Total</th>
@@ -166,6 +196,7 @@
                 </thead>
                 <tfoot>
                 <tr>
+                    <th>Date</th>
                     <th>Title</th>
                     <th>Status</th>
                     <th>Total</th>
