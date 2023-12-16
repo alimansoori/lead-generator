@@ -5,20 +5,22 @@
     <link rel="shortcut icon" type="image/ico"
           href="https://oabeans.com/wp-content/uploads/2020/08/OABeans-logo-150x150.png">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, user-scalable=no">
-    <title>Lead Generator</title>
+    <title>Monitor Servers</title>
     <link rel="stylesheet" type="text/css"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/datetime/1.5.0/css/dataTables.dateTime.min.css">
-    <link rel="stylesheet" type="text/css" href="../css/editor.dataTables.min.css">
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/searchbuilder/1.5.0/css/searchBuilder.dataTables.min.css">
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/buttons/2.4.0/css/buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.datatables.net/rowreorder/1.4.1/css/rowReorder.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="resources/fixedHeader.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="resources/syntax/shCore.css">
+    <link rel="stylesheet" type="text/css" href="https://code.highcharts.com/css/highcharts.css">
     <link rel="stylesheet" type="text/css" href="resources/demo.css">
     <link rel="stylesheet" type="text/css" href="resources/demo.css">
     <link rel="stylesheet" type="text/css" href="../css/style.css">
@@ -35,48 +37,23 @@
             src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
     <script type="text/javascript" language="javascript"
             src="https://cdn.datatables.net/datetime/1.3.1/js/dataTables.dateTime.min.js"></script>
-    <script type="text/javascript" language="javascript" src="../js/dataTables.editor.min.js"></script>
+    <script type="text/javascript" language="javascript"
+            src="https://cdn.datatables.net/rowreorder/1.4.1/js/dataTables.rowReorder.min.js"></script>
     <script type="text/javascript" language="javascript" src="resources/dataTables.fixedHeader.min.js"></script>
     <script type="text/javascript" language="javascript" src="resources/syntax/shCore.js"></script>
-    <script type="text/javascript" language="javascript" src="resources/demo.js"></script>
+    <script type="text/javascript" language="javascript" src="https://code.highcharts.com/highcharts.js"></script>
     <script type="text/javascript" language="javascript" src="resources/helper.js"></script>
-    <script type="text/javascript" language="javascript" src="resources/editor-demo.js"></script>
     <script type="text/javascript" language="javascript"
             src="https://cdn.datatables.net/buttons/2.4.1/js/buttons.colVis.min.js"></script>
     <script type="text/javascript" language="javascript" class="init">
-        let editor;
+        let table;
 
         $(document).ready(function () {
-            editor = new $.fn.dataTable.Editor({
-                ajax: {
-                    url: getAjaxUrl() + '/coupon?key=' + getKeyParam(),
-                    type: "POST",
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    data: function (d) {
-                        return JSON.stringify(d);
-                    },
-                },
-                table: "#example",
-                fields: [{
-                    label: "Site Name:",
-                    name: "siteName",
-                }, {
-                    label: "Coupon Code:",
-                    name: 'code',
-                }, {
-                    label: "Discount Percent:",
-                    name: "discountPercent",
-                    attr: {
-                        type: "number"
-                    }
-                }]
-            });
 
-            var table = $('#example').DataTable({
+            table = $('#example').DataTable({
                 fixedHeader: true,
                 ajax: {
-                    url: getAjaxUrl() + '/coupon',
+                    url: getAjaxUrl() + '/server-view',
                     type: "GET",
                     data: function (d) {
                         d.key = getKeyParam()
@@ -85,26 +62,23 @@
                 },
                 columns: [
                     {
-                        data: 'siteName',
-                        name: 'siteName',
+                        data: "updatedAt",
+                        name: 'updatedAt',
                     },
                     {
-                        data: 'code',
-                        name: 'code',
+                        data: "SERVER",
+                        name: 'SERVER',
                     },
                     {
-                        data: 'discountPercent',
-                        name: 'discountPercent',
+                        data: "no",
+                        name: 'no',
                     },
                 ],
-                select: true,
-                buttons: [
-                    {extend: 'create', editor},
-                    {extend: 'edit', editor},
-                    {extend: 'remove', editor},
-                ],
-                order: [[1, 'asc']],
-                dom: 'Bfrtip',
+                searchBuilder: {
+                    columns: [ 0, 1, 2],
+                },
+                order: [[0, 'desc']],
+                dom: 'frtQ',
                 scrollX: true,
                 processing: true,
                 language: {
@@ -115,21 +89,76 @@
                             '</div>'
                     }
                 },
-                pageLength: 20,
+                serverSide: true,
+                pageLength: 100,
+                paging: false,
+                scrollCollapse: true,
+                scrollY: '500px'
             });
+
+            // Create chart
+            const chart = Highcharts.chart('demo-output', {
+                chart: {
+                    type: 'pie',
+                    styledMode: true
+                },
+                title: {
+                    text: 'Title'
+                },
+                series: [
+                    {
+                        data: chartData(table)
+                    }
+                ]
+            });
+
+            table.on('draw', function () {
+                chart.series[0].setData(chartData(table));
+            });
+
+            function chartData(table) {
+                var counts = {};
+
+                table.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+                    var data = this.data();
+                    if (!counts[data['SERVER']]) counts[data['SERVER']] = 0
+                    counts[data['SERVER']] += parseInt(data['no']);
+                } );
+
+                // Count the number of entries for each position
+                /*table
+                    .column(1, { search: 'applied' })
+                    .data()
+                    .each(function (val) {
+                        if (counts[val]) {
+                            counts[val] += 1;
+                        }
+                        else {
+                            counts[val] = 1;
+                        }
+                    });*/
+
+                console.log(counts)
+
+                return Object.entries(counts).map((e) => ({
+                    name: e[0],
+                    y: e[1]
+                }));
+            }
         });
 
 
     </script>
 </head>
 <body class="dt-example dt-example-semanticui">
+
 <div class="sidebar">
     <a href="/leads/admin.html?key=yy7s39X2wQhqxYtp8euO">Admin</a>
-    <a href="/leads/monitor-servers.html?key=yy7s39X2wQhqxYtp8euO">Monitor Servers</a>
+    <a class="active" href="/leads/monitor-servers.html?key=yy7s39X2wQhqxYtp8euO">Monitor Servers</a>
     <a href="/leads/monitor-source-stat.html?key=yy7s39X2wQhqxYtp8euO">Monitor Source Stat</a>
     <a href="/leads/monitor-status-view.html?key=yy7s39X2wQhqxYtp8euO">Monitor Status View</a>
     <a href="/leads/monitor-source-view.html?key=yy7s39X2wQhqxYtp8euO">Monitor Source View</a>
-    <a class="active" href="/leads/coupons.html?key=yy7s39X2wQhqxYtp8euO">Coupons</a>
+    <a href="/leads/coupons.html?key=yy7s39X2wQhqxYtp8euO">Coupons</a>
     <a href="/leads/search-queues.html?key=yy7s39X2wQhqxYtp8euO">Search Queues</a>
 </div>
 
@@ -140,19 +169,20 @@
                 <img src="resources/logo.png">
             </a>
             <div class="demo-html">
+                <div id="demo-output" style="margin-bottom: 1em;" class="chart-display"></div>
                 <table id="example" class="cell-border dataTable" style="width:100%">
                     <thead>
                     <tr>
-                        <th>Site Name</th>
-                        <th>Coupon Code</th>
-                        <th>Discount Percent</th>
+                        <th>Date</th>
+                        <th>Server Address</th>
+                        <th>Count</th>
                     </tr>
                     </thead>
                     <tfoot>
                     <tr>
-                        <th>Site Name</th>
-                        <th>Coupon Code</th>
-                        <th>Discount Percent</th>
+                        <th>Date</th>
+                        <th>Server Address</th>
+                        <th>Count</th>
                     </tr>
                     </tfoot>
                 </table>
@@ -160,5 +190,7 @@
         </section>
     </div>
 </div>
+
+
 </body>
 </html>
