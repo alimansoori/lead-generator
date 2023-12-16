@@ -96,6 +96,41 @@
                 scrollY: '500px'
             });
 
+            // Create chart
+            const chart = Highcharts.chart('demo-output', {
+                chart: {
+                    type: 'pie',
+                    styledMode: true
+                },
+                title: {
+                    text: 'Title'
+                },
+                series: [
+                    {
+                        data: chartData(table)
+                    }
+                ]
+            });
+
+            table.on('draw', function () {
+                chart.series[0].setData(chartData(table));
+            });
+
+            function chartData(table) {
+                var counts = {};
+
+                table.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+                    var data = this.data();
+                    if (!counts[data['statusCode']]) counts[data['statusCode']] = 0
+                    counts[data['statusCode']] += parseInt(data['no']);
+                } );
+
+                return Object.entries(counts).map((e) => ({
+                    name: e[0],
+                    y: e[1]
+                }));
+            }
+
         });
 
 
