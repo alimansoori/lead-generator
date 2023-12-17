@@ -6,6 +6,20 @@ function dateFormat(date) {
     return `${year}-${month}-${day}`;
 }
 
+function diffDateFormat(number) {
+    let today = new Date();
+
+    let fiveDaysAgo = new Date(today);
+
+    fiveDaysAgo.setDate(today.getDate() + number);
+
+    const year = fiveDaysAgo.getFullYear();
+    const month = String(fiveDaysAgo.getMonth() + 1).padStart(2, '0');
+    const day = String(fiveDaysAgo.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+}
+
 function getAjaxUrl() {
     return "http://162.223.91.117:5000/api"
 }

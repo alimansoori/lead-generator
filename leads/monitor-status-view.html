@@ -74,9 +74,6 @@
                         name: 'no',
                     },
                 ],
-                searchBuilder: {
-                    columns: [ 0, 1, 2],
-                },
                 order: [[0, 'desc']],
                 dom: 'frtQ',
                 scrollX: true,
@@ -89,6 +86,23 @@
                             '</div>'
                     }
                 },
+                searchBuilder: {
+                    columns: [0, 1, 2],
+                    preDefined: {
+                        criteria: [
+                            {
+                                condition: 'between',
+                                data: 'date',
+                                origData: 'date',
+                                type: 'date',
+                                value: [diffDateFormat(-5), diffDateFormat(1)],
+                                value1: diffDateFormat(-5),
+                                value2: diffDateFormat(1)
+                            },
+                        ],
+                        logic: 'AND'
+                    }
+                },
                 serverSide: true,
                 pageLength: 100,
                 paging: false,
@@ -96,7 +110,7 @@
                 scrollY: '500px'
             });
 
-            // Create chart
+            // PIE chart
             const chart = Highcharts.chart('demo-output', {
                 chart: {
                     type: 'pie',
@@ -112,18 +126,21 @@
                 ]
             });
 
-            table.on('draw', function () {
-                chart.series[0].setData(chartData(table));
-            });
-
             function chartData(table) {
                 var counts = {};
 
-                table.rows().every( function ( rowIdx, tableLoop, rowLoop ) {
+                table.rows().every(function (rowIdx, tableLoop, rowLoop) {
                     var data = this.data();
                     if (!counts[data['statusCode']]) counts[data['statusCode']] = 0
                     counts[data['statusCode']] += parseInt(data['no']);
-                } );
+                });
+
+                console.log(
+                    Object.entries(counts).map((e) => ({
+                        name: e[0],
+                        y: e[1]
+                    }))
+                )
 
                 return Object.entries(counts).map((e) => ({
                     name: e[0],
@@ -131,9 +148,132 @@
                 }));
             }
 
-        });
+            // Bar Chart 200
+            const barChart = Highcharts.chart('bar-chart', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Status Code 200',
+                    align: 'left'
+                },
+                subtitle: {
+                    text:'title',
+                    align: 'left'
+                },
+                xAxis: {
+                    categories: Object.keys(barChartData200(table)),
+                    crosshair: true,
+                    accessibility: {
+                        description: 'Countries'
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: '1000 metric tons (MT)'
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: [
+                    {
+                        name: 'Status Code 200',
+                        data: Object.values(barChartData200(table))
+                    },
+                ]
+            });
 
+            function barChartData200(table) {
+                var counts = {};
 
+                table.rows().every(function (rowIdx, tableLoop, rowLoop) {
+                    var data = this.data();
+                    if (data['statusCode'] === 200) {
+                        counts[data['date']] = data['no']
+                    }
+                });
+
+                console.log(counts)
+
+                return counts
+            }
+
+            // Bar Chart !200
+            const barChartNot200 = Highcharts.chart('bar-chart-not-200', {
+                chart: {
+                    type: 'column'
+                },
+                title: {
+                    text: 'Status Code !200',
+                    align: 'left'
+                },
+                subtitle: {
+                    text:'title',
+                    align: 'left'
+                },
+                xAxis: {
+                    categories: Object.keys(barChartDataNot200(table)),
+                    crosshair: true,
+                    accessibility: {
+                        description: 'Countries'
+                    }
+                },
+                yAxis: {
+                    min: 0,
+                    title: {
+                        text: 'Count'
+                    }
+                },
+                plotOptions: {
+                    column: {
+                        pointPadding: 0.2,
+                        borderWidth: 0
+                    }
+                },
+                series: [
+                    {
+                        name: 'Status Code !200',
+                        data: Object.values(barChartDataNot200(table))
+                    },
+                ]
+            });
+
+            function barChartDataNot200(table) {
+                let counts = {};
+
+                table.rows().every(function (rowIdx, tableLoop, rowLoop) {
+                    let data = this.data();
+                    if (data['statusCode'] !== 200) {
+                        if (counts[data['date']]) {
+                            counts[data['date']] += data['no']
+                        } else {
+                            counts[data['date']] = data['no']
+                        }
+                    }
+                });
+
+                console.log(counts)
+
+                return counts
+            }
+
+            table.on('draw', function () {
+                chart.series[0].setData(chartData(table));
+
+                barChart.xAxis[0].categories = Object.keys(barChartData200(table))
+                barChart.series[0].setData(Object.values(barChartData200(table)));
+                barChart.redraw()
+
+                barChartNot200.xAxis[0].categories = Object.keys(barChartDataNot200(table))
+                barChartNot200.series[0].setData(Object.values(barChartDataNot200(table)));
+                barChartNot200.redraw()
+            });
+        })
     </script>
 </head>
 <body class="dt-example dt-example-semanticui">
@@ -156,6 +296,8 @@
             </a>
             <div class="demo-html">
                 <div id="demo-output" style="margin-bottom: 1em;" class="chart-display"></div>
+                <div id="bar-chart" style="margin-bottom: 1em;" class="chart-display"></div>
+                <div id="bar-chart-not-200" style="margin-bottom: 1em;" class="chart-display"></div>
                 <table id="example" class="cell-border dataTable" style="width:100%">
                     <thead>
                     <tr>
