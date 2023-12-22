@@ -5,7 +5,7 @@
     <link rel="shortcut icon" type="image/ico"
           href="https://oabeans.com/wp-content/uploads/2020/08/OABeans-logo-150x150.png">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, user-scalable=no">
-    <title>Monitor Source Stat</title>
+    <title>Monitor Robot Logs</title>
     <link rel="stylesheet" type="text/css"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.5/css/jquery.dataTables.min.css">
@@ -16,8 +16,6 @@
     <link rel="stylesheet" type="text/css"
           href="https://cdn.datatables.net/buttons/2.4.0/css/buttons.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.7.0/css/select.dataTables.min.css">
-    <link rel="stylesheet" type="text/css"
-          href="https://cdn.datatables.net/rowreorder/1.4.1/css/rowReorder.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="resources/fixedHeader.dataTables.min.css">
     <link rel="stylesheet" type="text/css" href="resources/syntax/shCore.css">
     <link rel="stylesheet" type="text/css" href="https://code.highcharts.com/css/highcharts.css">
@@ -37,8 +35,6 @@
             src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
     <script type="text/javascript" language="javascript"
             src="https://cdn.datatables.net/datetime/1.3.1/js/dataTables.dateTime.min.js"></script>
-    <script type="text/javascript" language="javascript"
-            src="https://cdn.datatables.net/rowreorder/1.4.1/js/dataTables.rowReorder.min.js"></script>
     <script type="text/javascript" language="javascript" src="resources/dataTables.fixedHeader.min.js"></script>
     <script type="text/javascript" language="javascript" src="resources/syntax/shCore.js"></script>
     <script type="text/javascript" language="javascript" src="https://code.highcharts.com/highcharts.js"></script>
@@ -53,7 +49,7 @@
             table = $('#example').DataTable({
                 fixedHeader: true,
                 ajax: {
-                    url: getAjaxUrl() + '/source-stat',
+                    url: getAjaxUrl() + '/robot-logs',
                     type: "GET",
                     data: function (d) {
                         d.key = getKeyParam()
@@ -62,53 +58,43 @@
                 },
                 columns: [
                     {
-                        data: "date",
-                        name: 'date',
+                        data: "createdAt",
+                        name: 'createdAt',
+                    },
+                    {
+                        data: "status",
+                        name: 'status',
+                    },
+                    {
+                        data: "statusCode",
+                        name: 'statusCode',
+                    },
+                    {
+                        data: "link",
+                        name: 'link',
                     },
                     {
                         data: "source",
                         name: 'source',
                     },
                     {
-                        data: "allNo",
-                        name: 'allNo',
+                        data: "timeout",
+                        name: 'timeout',
                     },
                     {
-                        data: "notOkNo",
-                        name: 'notOkNo',
-                        render: function (data, type) {
-                            if (type === 'display') {
-                                if (!data) {
-                                    return 0
-                                } else {
-                                    return parseInt(data)
-                                }
-                            }
-
-                            return data;
-                        }
+                        data: "server",
+                        name: 'server',
                     },
                     {
-                        data: "notOkPercent",
-                        name: 'notOkPercent',
-                        render: function (data, type) {
-                            if (type === 'display') {
-                                if (!data) {
-                                    return 0 + '%'
-                                } else {
-                                    return parseInt(data) + '%'
-                                }
-                            }
-
-                            return data;
-                        }
+                        data: "isBan",
+                        name: 'isBan',
                     },
                 ],
                 searchBuilder: {
-                    columns: [ 0, 1, 2, 3, 4],
+                    columns: [ 0, 1, 2, 3, 4, 5, 6, 7],
                 },
                 order: [[4, 'desc']],
-                dom: 'frtQ',
+                dom: 'frtpQ',
                 scrollX: true,
                 processing: true,
                 language: {
@@ -120,10 +106,8 @@
                     }
                 },
                 serverSide: true,
-                pageLength: 100,
-                paging: false,
-                scrollCollapse: true,
-                scrollY: '500px'
+                pageLength: 10,
+                paging: true,
             });
 
         });
@@ -155,19 +139,25 @@
                     <thead>
                     <tr>
                         <th>Date</th>
+                        <th>Status</th>
+                        <th>StatusCode</th>
+                        <th>Link</th>
                         <th>Source</th>
-                        <th>All Request</th>
-                        <th>Failed Request</th>
-                        <th>Failed Percent</th>
+                        <th>Time Out</th>
+                        <th>Server</th>
+                        <th>Is Ban?</th>
                     </tr>
                     </thead>
                     <tfoot>
                     <tr>
                         <th>Date</th>
+                        <th>Status</th>
+                        <th>StatusCode</th>
+                        <th>Link</th>
                         <th>Source</th>
-                        <th>All Request</th>
-                        <th>Failed Request</th>
-                        <th>Failed Percent</th>
+                        <th>Time Out</th>
+                        <th>Server</th>
+                        <th>Is Ban?</th>
                     </tr>
                     </tfoot>
                 </table>
