@@ -93,6 +93,24 @@
                 searchBuilder: {
                     columns: [ 0, 1, 2, 3, 4, 5, 6, 7],
                 },
+                columnDefs: [
+                    {
+                        targets: 0,
+                        searchBuilder: {
+                            defaultCondition: '=',
+                        },
+                        searchBuilderTitle: 'Date',
+                        searchBuilderType: 'date',
+                    },
+                    {
+                        targets: 1,
+                        searchBuilder: {
+                            defaultCondition: 'contains',
+                        },
+                        searchBuilderTitle: 'Status',
+                        searchBuilderType: 'string',
+                    },
+                ],
                 order: [[4, 'desc']],
                 dom: 'frtpQ',
                 scrollX: true,
@@ -125,6 +143,7 @@
     <a href="/leads/monitor-source-view.html?key=yy7s39X2wQhqxYtp8euO">Monitor Source View</a>
     <a href="/leads/coupons.html?key=yy7s39X2wQhqxYtp8euO">Coupons</a>
     <a href="/leads/search-queues.html?key=yy7s39X2wQhqxYtp8euO">Search Queues</a>
+    <a href="/leads/site-map.html?key=yy7s39X2wQhqxYtp8euO">Site Map</a>
 </div>
 
 <div class="content">
