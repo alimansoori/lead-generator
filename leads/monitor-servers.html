@@ -76,6 +76,20 @@
                 ],
                 searchBuilder: {
                     columns: [ 0, 1, 2],
+                    preDefined: {
+                        criteria: [
+                            {
+                                condition: 'between',
+                                data: 'date',
+                                origData: 'date',
+                                type: 'date',
+                                value: [diffDateFormat(-5), diffDateFormat(1)],
+                                value1: diffDateFormat(-5),
+                                value2: diffDateFormat(1)
+                            },
+                        ],
+                        logic: 'AND'
+                    }
                 },
                 order: [[0, 'desc']],
                 dom: 'frtQ',
@@ -91,7 +105,7 @@
                 },
                 serverSide: true,
                 pageLength: 100,
-                paging: false,
+                paging: true,
                 scrollCollapse: true,
                 scrollY: '500px'
             });
