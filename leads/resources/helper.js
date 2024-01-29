@@ -24,6 +24,10 @@ function getAjaxUrl() {
     return "http://162.223.91.117:5000/api"
 }
 
+function getCrawlerUrl() {
+    return "http://162.223.91.117:4000/api"
+}
+
 function getAjaxUrlTest() {
     return "http://162.223.91.117:5000/api/test"
 }
