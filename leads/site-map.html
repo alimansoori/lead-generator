@@ -46,6 +46,19 @@
         let editor;
         let testEditor;
 
+        const selectorTypeRender = [
+            {label: "text", value: 'text'},
+            {label: "src", value: 'src'},
+            {label: "for", value: 'for'},
+            {label: "value", value: 'value'},
+            {label: "title", value: 'title'},
+            {label: "href", value: 'href'},
+            {label: "content", value: 'content'},
+            {label: "data-price", value: 'data-price'},
+            {label: "data-pid", value: 'data-pid'},
+            {label: "data-price-amount", value: 'data-price-amount'},
+        ]
+
         $(document).ready(function () {
             editor = new $.fn.dataTable.Editor({
                 ajax: {
@@ -58,6 +71,7 @@
                     },
                 },
                 table: "#example",
+                template: '#customForm',
                 fields: [
                     {
                         label: "Site Name:",
@@ -65,14 +79,281 @@
                     }, {
                         label: "Path:",
                         name: 'path',
+                        type: 'select',
+                        options: ['detail-page', 'list'],
                         def: 'detail-page'
                     }, {
                         label: "Content (JSON):",
                         name: "content",
                         type: "textarea"
+                    }, {
+                        label: "JS render:",
+                        name: 'js_render',
+                        def: false,
+                        type: 'radio',
+                        options: [
+                            {label: "Yes", value: true},
+                            {label: "No", value: false}
+                        ]
+                    }, {
+                        label: "Wait for:",
+                        name: "wait_for",
+                        attr: {
+                            placeholder: "Type wait for selector"
+                        }
+                    }, {
+                        label: "Load type::",
+                        name: "load_type",
+                        def: 'load',
+                        type: 'radio',
+                        options: [
+                            {label: "load", value: 'load'},
+                            {label: "domcontentloaded", value: 'domcontentloaded'},
+                            {label: "networkidle0", value: 'networkidle0'},
+                            {label: "networkidle2", value: 'networkidle2'}
+                        ]
+                    }, {
+                        label: "Activate Product details:",
+                        name: 'activate_product_details',
+                        def: false,
+                        type: 'radio',
+                        options: [
+                            {label: "Yes", value: true},
+                            {label: "No", value: false}
+                        ]
+                    }, {
+                        label: "Activate Availability:",
+                        name: 'product_details.activate_availability',
+                        def: false,
+                        type: 'radio',
+                        options: [
+                            {label: "Yes", value: true},
+                            {label: "No", value: false}
+                        ]
+                    }, {
+                        label: "Render Type:",
+                        name: 'product_details.availability.render',
+                        def: 'text',
+                        type: 'select',
+                        options: selectorTypeRender
+                    }, {
+                        label: "Selector:",
+                        name: 'product_details.availability.selector',
+                        attr: {
+                            placeholder: "Type availability selector"
+                        }
+                    }, {
+                        label: "Activate Price:",
+                        name: 'product_details.activate_price',
+                        def: false,
+                        type: 'radio',
+                        options: [
+                            {label: "Yes", value: true},
+                            {label: "No", value: false}
+                        ]
+                    }, {
+                        label: "Price Render Type:",
+                        name: 'product_details.price.render',
+                        def: 'text',
+                        type: 'select',
+                        options: selectorTypeRender
+                    }, {
+                        label: "Price Selector:",
+                        name: 'product_details.price.selector',
+                        attr: {
+                            placeholder: "Type price selector"
+                        }
+                    }, {
+                        label: "Activate Images:",
+                        name: 'product_details.activate_images',
+                        def: false,
+                        type: 'radio',
+                        options: [
+                            {label: "Yes", value: true},
+                            {label: "No", value: false}
+                        ]
+                    }, {
+                        label: "Images Render Type:",
+                        name: 'product_details.images.render',
+                        def: 'src',
+                        type: 'select',
+                        options: selectorTypeRender
+                    }, {
+                        label: "Images Selector:",
+                        name: 'product_details.images.selector',
+                        attr: {
+                            placeholder: "Type images selector"
+                        }
+                    }, {
+                        label: "Activate UPC:",
+                        name: 'product_details.activate_upc',
+                        def: false,
+                        type: 'radio',
+                        options: [
+                            {label: "Yes", value: true},
+                            {label: "No", value: false}
+                        ]
+                    }, {
+                        label: "UPC Render Type:",
+                        name: 'product_details.upc.render',
+                        def: 'text',
+                        type: 'select',
+                        options: selectorTypeRender
+                    }, {
+                        label: "UPC Selector:",
+                        name: 'product_details.upc.selector',
+                        attr: {
+                            placeholder: "Type UPC selector"
+                        }
+                    }, {
+                        label: "Activate Wait for:",
+                        name: 'product_details.activate_wait_for',
+                        def: false,
+                        type: 'radio',
+                        options: [
+                            {label: "Yes", value: true},
+                            {label: "No", value: false}
+                        ]
+                    }, {
+                        label: "Wait for:",
+                        name: 'product_details.wait_for',
+                        attr: {
+                            placeholder: "Type wait for selector"
+                        }
+                    }, {
+                        label: "Activate Title:",
+                        name: 'product_details.activate_title',
+                        def: false,
+                        type: 'radio',
+                        options: [
+                            {label: "Yes", value: true},
+                            {label: "No", value: false}
+                        ]
+                    }, {
+                        label: "Title:",
+                        name: 'product_details.title',
+                        attr: {
+                            placeholder: "Type title selector"
+                        }
                     }
                 ]
             });
+
+            editor.dependent('path', function (val) {
+                if (val === 'detail-page') {
+                    $('fieldset.activate_product_details').fadeIn(1000)
+                } else if (val === 'list') {
+                    $('fieldset.activate_product_details').fadeOut(1000)
+                }
+                return val === 'detail-page'
+                    ? {show: ['js_render', 'wait_for', 'load_type', 'activate_product_details']}
+                    : {hide: ['js_render', 'wait_for', 'load_type', 'activate_product_details']};
+            });
+
+            editor.dependent('activate_product_details', function (val) {
+                if (val === true) {
+                    $('fieldset.wait_for').fadeIn(1000)
+                    $('fieldset.availability').fadeIn(1000)
+                    $('fieldset.title').fadeIn(1000)
+                    $('fieldset.images').fadeIn(1000)
+                    $('fieldset.upc').fadeIn(1000)
+                    $('fieldset.price').fadeIn(1000)
+                } else {
+                    $('fieldset.wait_for').fadeOut(1000)
+                    $('fieldset.availability').fadeOut(1000)
+                    $('fieldset.title').fadeOut(1000)
+                    $('fieldset.images').fadeOut(1000)
+                    $('fieldset.upc').fadeOut(1000)
+                    $('fieldset.price').fadeOut(1000)
+                }
+
+                return val === true
+                    ? {show: ['product_details.activate_availability', 'product_details.activate_wait_for']}
+                    : {hide: ['product_details.activate_availability', 'product_details.activate_wait_for']};
+            });
+
+            editor.dependent('product_details.activate_wait_for', function (val) {
+                return val === true
+                    ? {show: ['product_details.wait_for']}
+                    : {hide: ['product_details.wait_for']};
+            });
+
+            editor.dependent('product_details.activate_title', function (val) {
+                return val === true
+                    ? {show: ['product_details.title']}
+                    : {hide: ['product_details.title']};
+            });
+
+            editor.dependent('product_details.activate_availability', function (val) {
+                return val === true
+                    ? {show: ['product_details.availability.render', 'product_details.availability.selector']}
+                    : {hide: ['product_details.availability.render', 'product_details.availability.selector']};
+            });
+
+            editor.dependent('product_details.activate_images', function (val) {
+                return val === true
+                    ? {show: ['product_details.images.render', 'product_details.images.selector']}
+                    : {hide: ['product_details.images.render', 'product_details.images.selector']};
+            });
+
+            editor.dependent('product_details.activate_upc', function (val) {
+                return val === true
+                    ? {show: ['product_details.upc.render', 'product_details.upc.selector']}
+                    : {hide: ['product_details.upc.render', 'product_details.upc.selector']};
+            });
+
+            editor.dependent('product_details.activate_price', function (val) {
+                return val === true
+                    ? {show: ['product_details.price.render', 'product_details.price.selector']}
+                    : {hide: ['product_details.price.render', 'product_details.price.selector']};
+            });
+
+            // Validation Editor
+            /*editor.on('preSubmit', function (e, o, action) {
+                if (action !== 'remove') {
+                    let siteName = this.field('siteName')
+                    let path = this.field('path')
+                    let waitFor = this.field('wait_for')
+                    let jsRender = this.field('js_render')
+                    let loadType = this.field('load_type')
+                    let activateProductDetails = this.field('activate_product_details')
+                    let productDetailsActivateWaitFor = this.field('product_details.activate_wait_for')
+                    let productDetailsWaitFor = this.field('product_details.wait_for')
+
+                    // Only validate user input values - different values indicate that
+                    // the end user has not entered a value
+                    if (!siteName.isMultiValue()) {
+                        if (!siteName.val()) {
+                            siteName.error('A site name must be given');
+                        }
+                    }
+                    if (!waitFor.isMultiValue()) {
+                        if (!waitFor.val() && path.val() === 'detail-page') {
+                            waitFor.error('A wait for selector must be given');
+                        }
+                    }
+                    if (!jsRender.isMultiValue()) {
+                        if (typeof jsRender.val() !== "boolean") {
+                            waitFor.error('A jsRender selector must be given');
+                        }
+                    }
+                    if (!loadType.isMultiValue()) {
+                        if (!loadType.val()) {
+                            waitFor.error('A load type selector must be given');
+                        }
+                    }
+                    if (!productDetailsWaitFor.isMultiValue()) {
+                        if (!productDetailsWaitFor.val() && path.val() === 'detail-page' && productDetailsActivateWaitFor.val() === true) {
+                            productDetailsWaitFor.error('A product wait for selector must be given');
+                        }
+                    }
+
+                    // If any error was reported, cancel the submission so it can be corrected
+                    if (this.inError()) {
+                        return false;
+                    }
+                }
+            });*/
 
             testEditor = new $.fn.dataTable.Editor({
                 ajax: {
@@ -114,7 +395,7 @@
                     }
                 ]
             });
-            testEditor.field( 'headless' ).hide();
+            // testEditor.field( 'headless' ).hide();
             testEditor.on('submitSuccess', function (e, json, data, action) {
                 const keys = Object.keys(json);
                 let text = ""
@@ -205,6 +486,58 @@
                 <img src="resources/logo.png">
             </a>
             <div class="demo-html">
+                <div id="customForm">
+                    <fieldset class="general">
+                        <legend>General</legend>
+                        <div data-editor-template="siteName"></div>
+                        <div data-editor-template="content"></div>
+                    </fieldset>
+                    <fieldset class="path">
+                        <legend>Path</legend>
+                        <div data-editor-template="path"></div>
+                        <div data-editor-template="js_render"></div>
+                        <div data-editor-template="wait_for"></div>
+                        <div data-editor-template="load_type"></div>
+                        <fieldset class="activate_product_details" style="display: none">
+                            <legend>Product Details</legend>
+                            <div data-editor-template="activate_product_details"></div>
+                            <fieldset class="wait_for" style="display: none">
+                                <legend>Product wait for selector</legend>
+                                <div data-editor-template="product_details.activate_wait_for"></div>
+                                <div data-editor-template="product_details.wait_for"></div>
+                            </fieldset>
+                            <fieldset class="title" style="display: none">
+                                <legend>Product Title</legend>
+                                <div data-editor-template="product_details.activate_title"></div>
+                                <div data-editor-template="product_details.title"></div>
+                            </fieldset>
+                            <fieldset class="availability" style="display: none">
+                                <legend>Product Availability</legend>
+                                <div data-editor-template="product_details.activate_availability"></div>
+                                <div data-editor-template="product_details.availability.selector"></div>
+                                <div data-editor-template="product_details.availability.render"></div>
+                            </fieldset>
+                            <fieldset class="price" style="display: none">
+                                <legend>Product Price</legend>
+                                <div data-editor-template="product_details.activate_price"></div>
+                                <div data-editor-template="product_details.price.selector"></div>
+                                <div data-editor-template="product_details.price.render"></div>
+                            </fieldset>
+                            <fieldset class="images" style="display: none">
+                                <legend>Product Images</legend>
+                                <div data-editor-template="product_details.activate_images"></div>
+                                <div data-editor-template="product_details.images.selector"></div>
+                                <div data-editor-template="product_details.images.render"></div>
+                            </fieldset>
+                            <fieldset class="upc" style="display: none">
+                                <legend>Product UPC</legend>
+                                <div data-editor-template="product_details.activate_upc"></div>
+                                <div data-editor-template="product_details.upc.selector"></div>
+                                <div data-editor-template="product_details.upc.render"></div>
+                            </fieldset>
+                        </fieldset>
+                    </fieldset>
+                </div>
                 <table id="example" class="cell-border dataTable" style="width:100%">
                     <thead>
                     <tr>

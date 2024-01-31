@@ -3,8 +3,11 @@
     flex-flow: row wrap;
 }
 
-#customForm fieldset {
+#customForm > fieldset {
     flex: 1;
+}
+
+#customForm fieldset {
     border: 1px solid #aaa;
     margin: 0.5em;
 }
@@ -15,11 +18,11 @@
     font-weight: bold;
 }
 
-#customForm fieldset.leadTmp {
+#customForm > fieldset.leadTmp, #customForm > fieldset.general, #customForm > fieldset.path {
     flex: 2 100%;
 }
 
-#customForm fieldset.leadTmp legend {
+#customForm > fieldset.leadTmp legend, #customForm > fieldset.general legend {
     background: #bfffbf;
 }
 
