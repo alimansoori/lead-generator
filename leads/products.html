@@ -138,9 +138,17 @@
                         data: 'upcList',
                         name: 'upcList',
                         width: '10%',
-                        render: function (data) {
+                        render: function (data, type) {
                             if (!data) {
                                 return ''
+                            }
+
+                            if (type === 'display') {
+                                try {
+                                    return '<span title="' +data+ '">' + data.substring(0,48) + '</span>'
+                                } catch (e) {
+                                    return '....'
+                                }
                             }
 
                             return data;
