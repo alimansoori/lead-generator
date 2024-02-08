@@ -126,7 +126,7 @@
                 ]
             });*/
 
-            function chartData(table) {
+            /*function chartData(table) {
                 var counts = {};
 
                 table.rows().every(function (rowIdx, tableLoop, rowLoop) {
@@ -146,7 +146,7 @@
                     name: e[0],
                     y: e[1]
                 }));
-            }
+            }*/
 
             // Bar Chart 200
             const barChart = Highcharts.chart('bar-chart', {
@@ -263,7 +263,7 @@
             }
 
             table.on('draw', function () {
-                chart.series[0].setData(chartData(table));
+                // chart.series[0].setData(chartData(table));
 
                 barChart.xAxis[0].categories = Object.keys(barChartData200(table))
                 barChart.series[0].setData(Object.values(barChartData200(table)));
