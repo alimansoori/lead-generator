@@ -145,7 +145,7 @@
 
                             if (type === 'display') {
                                 try {
-                                    return '<span title="' +data+ '">' + data.substring(0,48) + '</span>'
+                                    return '<span title="' +data+ '">' + data.substring(0,20) + '</span>'
                                 } catch (e) {
                                     return '....'
                                 }
@@ -176,6 +176,23 @@
                     {extend: 'create', editor},
                     {extend: 'edit', editor},
                     {extend: 'remove', editor},
+                    {
+                        text: 'Select filter applied - object',
+                        extend: 'selectAll',
+                        selectorModifier: {
+                            search: 'applied'
+                        }
+                    },
+                    {
+                        text: 'Select current page - function',
+                        extend: 'selectAll',
+                        selectorModifier: function () {
+                            return {
+                                page: 'current'
+                            }
+                        }
+                    },
+                    'selectNone'
                 ],
                 searchBuilder: {
                     columns: [0, 1],

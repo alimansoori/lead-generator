@@ -250,7 +250,7 @@
 
                 table.rows().every(function (rowIdx, tableLoop, rowLoop) {
                     let data = this.data();
-                    if (data['statusCode'] !== 200) {
+                    if (data['statusCode'] !== 200 && data['statusCode'] !== 201) {
                         if (counts[data['date']]) {
                             counts[data['date']] += data['no']
                         } else {
