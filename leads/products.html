@@ -65,6 +65,32 @@
                     }, {
                         label: "UPC List",
                         name: "upcList",
+                    }, {
+                        label: "Parsed ?",
+                        name: "parsed",
+                        def: false,
+                        type: 'radio',
+                        options: [
+                            {label: "Yes", value: true},
+                            {label: "No", value: false}
+                        ]
+                    }, {
+                        label: "Sent to Matcher ?",
+                        name: "sentToMatcher",
+                        def: false,
+                        type: 'radio',
+                        options: [
+                            {label: "Yes", value: true},
+                            {label: "No", value: false}
+                        ]
+                    }, {
+                        label: "Error ?",
+                        name: "error",
+                        type: 'textarea'
+                    }, {
+                        label: "Note ?",
+                        name: "note",
+                        type: 'textarea'
                     }
                 ]
             });
@@ -170,6 +196,47 @@
                             return data;
                         }
                     },
+                    {
+                        data: 'sentToMatcher',
+                        name: 'sentToMatcher',
+                        width: '10%',
+                        render: function (data) {
+                            if (!data || data === false) {
+                                return 'No'
+                            }
+
+                            if (data === true) {
+                                return 'Yes'
+                            }
+
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'error',
+                        name: 'error',
+                        width: '10%',
+                        render: function (data) {
+                            if (!data) {
+                                return ''
+                            }
+                            return data;
+                        }
+                    },
+                    {
+                        data: 'note',
+                        name: 'note',
+                        width: '10%',
+                        render: function (data, type) {
+                            if (!data) {
+                                return ''
+                            }
+                            if (type === 'display') {
+                                return '<span title="' +data+ '">' + data.substring(0,20) + '</span>'
+                            }
+                            return data;
+                        }
+                    },
                 ],
                 select: true,
                 buttons: [
@@ -195,10 +262,10 @@
                     'selectNone'
                 ],
                 searchBuilder: {
-                    columns: [0, 1],
+                    columns: [0, 1, 2, 3 , 4 , 5 , 6, 7],
                 },
                 order: [[1, 'asc']],
-                dom: 'BfrtipQ',
+                dom: 'BflrtipQ',
                 scrollX: true,
                 language: {
                     processing: function () {
@@ -211,6 +278,10 @@
                 processing: true,
                 serverSide: true,
                 pageLength: 20,
+                lengthMenu: [
+                    [10, 25, 50, 100, 500],
+                    [10, 25, 50, 100, 500]
+                ]
             });
         });
     </script>
@@ -244,6 +315,9 @@
                         <th>Images</th>
                         <th>UPC List</th>
                         <th>Parsed</th>
+                        <th>Sent to Matcher?</th>
+                        <th>Error</th>
+                        <th>Note</th>
                     </tr>
                     </thead>
                     <tfoot>
@@ -253,6 +327,9 @@
                         <th>Images</th>
                         <th>UPC List</th>
                         <th>Parsed</th>
+                        <th>Sent to Matcher?</th>
+                        <th>Error</th>
+                        <th>Note</th>
                     </tr>
                     </tfoot>
                 </table>
