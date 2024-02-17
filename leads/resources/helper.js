@@ -21,7 +21,7 @@ function diffDateFormat(number) {
 }
 
 function getAjaxUrl() {
-    return "http://127.0.0.1:5000/api"
+    return "http://162.223.91.117:5000/api"
 }
 
 function getCrawlerUrl() {
