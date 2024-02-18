@@ -99,54 +99,20 @@
                                 value1: dateFormat(new Date())
                             },
                             {
-                                criteria: [
-                                    {
-                                        criteria: [
-                                            {
-                                                condition: '>=',
-                                                data: 'Profit',
-                                                origData: 'profit',
-                                                type: 'num-ftm',
-                                                value: ['4'],
-                                                value1: '4'
-                                            }, {
-                                                condition: '>',
-                                                data: 'ROI',
-                                                origData: 'roi',
-                                                type: 'num-ftm',
-                                                value: ['30'],
-                                                value1: '30'
-                                            }
-                                        ],
-                                        logic: 'AND'
-                                    },
-                                    {
-                                        criteria: [
-                                            {
-                                                condition: '>=',
-                                                data: 'Profit (C)',
-                                                origData: 'couponProfit',
-                                                type: 'num-ftm',
-                                                value: ['4'],
-                                                value1: '4'
-                                            }, {
-                                                condition: '>',
-                                                data: 'ROI (C)',
-                                                origData: 'couponRoi',
-                                                type: 'num-ftm',
-                                                value: ['30'],
-                                                value1: '30'
-                                            }, {
-                                                condition: '!null',
-                                                data: 'Coupon',
-                                                origData: 'source.coupon',
-                                                type: 'string',
-                                            }
-                                        ],
-                                        logic: 'AND'
-                                    },
-                                ],
-                                logic: 'OR'
+                                condition: '>=',
+                                data: 'Profit',
+                                origData: 'profit',
+                                type: 'num-ftm',
+                                value: ['4'],
+                                value1: '4'
+                            },
+                            {
+                                condition: '>',
+                                data: 'ROI',
+                                origData: 'roi',
+                                type: 'num-ftm',
+                                value: ['30'],
+                                value1: '30'
                             },
                             {
                                 condition: '=',

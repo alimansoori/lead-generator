@@ -838,6 +838,7 @@ function columnDefs() {
         },
         {
             targets: 14,
+            visible: false,
             searchBuilder: {
                 defaultCondition: '>',
             },
@@ -845,6 +846,7 @@ function columnDefs() {
         },
         {
             targets: 15,
+            visible: false,
             searchBuilder: {
                 defaultCondition: '>',
             },
@@ -852,6 +854,7 @@ function columnDefs() {
         },
         {
             targets: 16,
+            visible: false,
             searchBuilder: {
                 defaultCondition: '>',
             },
@@ -859,6 +862,7 @@ function columnDefs() {
         },
         {
             targets: 17,
+            visible: false,
             searchBuilder: {
                 defaultCondition: 'contains',
             },
