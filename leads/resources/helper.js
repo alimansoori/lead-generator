@@ -21,7 +21,7 @@ function diffDateFormat(number) {
 }
 
 function getAjaxUrl() {
-    return "http://162.223.91.117:5000/api"
+    return "http://127.0.0.1:5000/api"
 }
 
 function getCrawlerUrl() {
@@ -741,11 +741,40 @@ function columns() {
                 return data;
             }
         },
+        {
+            data: 'createdAt',
+            name: 'createdAt',
+            className: 'inline-block',
+            render: function (data, type) {
+                if (type === 'display') {
+                    let currentDate = new Date();
+                    const date = new Date(data)
+                    let timeDiff = currentDate.getTime() - date.getTime();
+
+                    let seconds = Math.floor(timeDiff / 1000);
+                    let minutes = Math.floor(seconds / 60);
+                    let hours = Math.floor(minutes / 60);
+                    let days = Math.floor(hours / 24);
+
+                    if (days > 0) {
+                        return days + " days ago";
+                    } else if (hours > 0) {
+                        return hours + " hours ago";
+                    } else if (minutes > 0) {
+                        return minutes + " minutes ago";
+                    } else {
+                        return "a few seconds before";
+                    }
+                }
+
+                return data;
+            }
+        }
     ]
 }
 
 function searchBuilderColumns() {
-    return [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37]
+    return [0, 1, 2, 3, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38]
 }
 
 function columnDefs() {
@@ -1007,6 +1036,11 @@ function columnDefs() {
             target: 37,
             visible: false,
             searchBuilderTitle: 'Source Data',
+        },
+        {
+            target: 38,
+            visible: false,
+            searchBuilderTitle: 'Lead Created At',
         },
     ]
 }
