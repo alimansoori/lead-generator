@@ -1041,6 +1041,7 @@ function columnDefs() {
             target: 38,
             visible: false,
             searchBuilderTitle: 'Lead Created At',
+            searchBuilderType: "date"
         },
     ]
 }
