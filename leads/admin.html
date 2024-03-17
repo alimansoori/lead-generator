@@ -110,6 +110,14 @@
                         extend: 'colvis',
                         postfixButtons: ['colvisRestore']
                     },
+                    {
+                        text: 'Select filter applied - object',
+                        extend: 'selectAll',
+                        selectorModifier: {
+                            search: 'applied'
+                        }
+                    },
+                    'selectNone'
                 ],
                 rowCallback: function (row, data) {
                     rowCallback(row, data)
@@ -133,7 +141,7 @@
                 serverSide: true,
                 // stateSave: true,
                 // rowReorder: true,
-                pageLength: 20,
+                pageLength: 25,
                 lengthMenu: [
                     [10, 25, 50, 100, 500],
                     [10, 25, 50, 100, 500]
