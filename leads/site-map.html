@@ -429,8 +429,22 @@
                         data: 'path',
                         name: 'path',
                     },
+                    {
+                        data: 'content',
+                        name: 'content',
+                    },
                 ],
                 select: true,
+                columnDefs: [
+                    {
+                        targets: 2,
+                        searchBuilder: {
+                            defaultCondition: 'contains',
+                        },
+                        searchBuilderTitle: 'Content',
+                        searchBuilderType: 'string',
+                    }
+                ],
                 buttons: [
                     {extend: 'create', editor},
                     {extend: 'edit', editor},
