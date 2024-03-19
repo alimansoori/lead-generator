@@ -22,6 +22,7 @@
 
     <script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" language="javascript" src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.6.3/papaparse.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/searchbuilder/1.5.0/js/dataTables.searchBuilder.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/buttons/2.4.0/js/dataTables.buttons.min.js"></script>
     <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/select/1.7.0/js/dataTables.select.min.js"></script>
@@ -91,6 +92,39 @@
                         label: "Note ?",
                         name: "note",
                         type: 'textarea'
+                    }
+                ]
+            });
+
+            const uploadEditor = new DataTable.Editor({
+                fields: [
+                    {
+                        label: 'CSV file:',
+                        name: 'csv',
+                        type: 'upload',
+                        ajax: function (files, done) {
+                            // Ajax override of the upload so we can handle the file locally. Here we use Papa
+                            // to parse the CSV.
+                            Papa.parse(files[0], {
+                                header: true,
+                                skipEmptyLines: true,
+                                complete: function (results) {
+                                    if (results.errors.length) {
+                                        console.log(results);
+                                        uploadEditor
+                                            .field('csv')
+                                            .error('CSV parsing error: ' + results.errors[0].message);
+                                    }
+                                    else {
+                                        selectColumns(editor, results.data, results.meta.fields);
+                                    }
+
+                                    // Tell Editor the upload is complete - the array is a list of file
+                                    // id's, which the value of doesn't matter in this case.
+                                    done([0]);
+                                }
+                            });
+                        }
                     }
                 ]
             });
@@ -244,19 +278,18 @@
                     {extend: 'edit', editor},
                     {extend: 'remove', editor},
                     {
-                        text: 'Select filter applied - object',
-                        extend: 'selectAll',
-                        selectorModifier: {
-                            search: 'applied'
+                        text: 'Import CSV',
+                        action: function () {
+                            uploadEditor.create({
+                                title: 'CSV file import'
+                            });
                         }
                     },
                     {
-                        text: 'Select current page - function',
+                        text: 'Select All',
                         extend: 'selectAll',
-                        selectorModifier: function () {
-                            return {
-                                page: 'current'
-                            }
+                        selectorModifier: {
+                            search: 'applied'
                         }
                     },
                     'selectNone'
